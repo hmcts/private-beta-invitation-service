@@ -1,0 +1,6 @@
+server:
+  port: 4700
+
+management:
+  security:
+    enabled: false
