@@ -5,9 +5,9 @@ as we have some expectations related to the content and quality of change sets.
 
 ## What you should know about this application
 
-This project is a service that sends private beta invitation emails to citizens. It constantly checks if there is
+This project is a service that sends private beta welcome emails to citizens. It constantly checks if there is
  a new person that has agreed to join private beta and if there is one,
- it calls [GOV.UK Notify](https://www.gov.uk/government/publications/govuk-notify) to send the invitation email,
+ it calls [GOV.UK Notify](https://www.gov.uk/government/publications/govuk-notify) to send the welcome email,
  using the appropriate email template.
 
 ## Before contributing
