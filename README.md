@@ -85,6 +85,30 @@ as the Hystrix event stream URL. Keep in mind that you'll only see data once som
 of your Hystrix commands have been executed. Otherwise `Loading ...` message will be displayed
 on the monitoring page.
 
+## Configuration
+
+### Using GOV.UK Notify email client stub
+
+In order to use GOV.UK Notify email client stub, instead of the real client sending requests to Notify,
+make sure you have `NOTIFY_USE_STUB` environment variable set to `true`.
+
+### Configuring email template details for each service
+
+In order to make this service send welcome emails to your service's private beta users,
+you need to extend `emailTemplateMappings` section in [configuration](src/main/resources/application.yaml)
+by adding en element containing `service`, `templateId`, `notifyApiKey` and `welcomeLink` properties:
+
+```
+emailTemplateMappings:
+  - service: '...'      # The name of your service
+    templateId: '...'   # ID of the email template in GOV.UK Notify
+    notifyApiKey: '...' # Authentication key to use when calling Notify
+                        # Provide this value via environment variable, e.g. ${DIVORCE_NOTIFY_API_KEY}
+    welcomeLink: '...'  # Welcome link to provide in the emails
+  -
+    ...
+```
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
