@@ -17,6 +17,7 @@ services:
       - REFORM_SERVICE_NAME
       - REFORM_TEAM
       - REFORM_ENVIRONMENT
+      - SPRING_PROFILES_ACTIVE
     volumes:
       - ./build/install/private-beta-invitation-service:/opt/app/
     ports:

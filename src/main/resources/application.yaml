@@ -4,3 +4,25 @@ server:
 management:
   security:
     enabled: false
+
+notify:
+  useStub: ${NOTIFY_USE_STUB:false}
+
+emailTemplateMappings:
+
+---
+spring:
+  profiles: dev
+
+notify:
+  useStub: true
+
+emailTemplateMappings:
+  - service: 'test-service-1'
+    templateId: 'test-service-1-template'
+    notifyApiKey: 'test-service-1-key'
+    welcomeLink: 'http://welcome-link-for-test-service-1.example.com'
+  - service: 'test-service-2'
+    templateId: 'test-service-2-template'
+    notifyApiKey: 'test-service-2-key'
+    welcomeLink: 'http://welcome-link-for-test-service-2.example.com'
