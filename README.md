@@ -96,14 +96,13 @@ make sure you have `NOTIFY_USE_STUB` environment variable set to `true`.
 
 In order to make this service send welcome emails to your service's private beta users,
 you need to extend `emailTemplateMappings` section in [configuration](src/main/resources/application.yaml)
-by adding en element containing `service`, `templateId`, `notifyApiKey` and `welcomeLink` properties:
+by adding an element containing `service`, `templateId`, `notifyApiKey` and `welcomeLink` properties:
 
 ```
 emailTemplateMappings:
   - service: '...'      # The name of your service
     templateId: '...'   # ID of the email template in GOV.UK Notify
-    notifyApiKey: '...' # Authentication key to use when calling Notify
-                        # Provide this value via environment variable, e.g. ${DIVORCE_NOTIFY_API_KEY}
+    notifyApiKey: '...' # Authentication key to use when calling Notify. Provide this value via environment variable, e.g. ${DIVORCE_NOTIFY_API_KEY}
     welcomeLink: '...'  # Welcome link to provide in the emails
   -
     ...

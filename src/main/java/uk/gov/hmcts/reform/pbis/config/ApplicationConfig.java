@@ -12,7 +12,7 @@ import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
 public class ApplicationConfig {
 
     @Value("${notify.useStub}")
-    private Boolean useNotifyClientStub;
+    private boolean useNotifyClientStub;
 
     private final List<EmailTemplateMapping> emailTemplateMappings = new ArrayList<>();
 
@@ -20,7 +20,7 @@ public class ApplicationConfig {
         return emailTemplateMappings;
     }
 
-    public Boolean getUseNotifyClientStub() {
+    public boolean getUseNotifyClientStub() {
         return useNotifyClientStub;
     }
 
