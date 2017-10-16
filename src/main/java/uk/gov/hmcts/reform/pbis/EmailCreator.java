@@ -5,6 +5,8 @@ import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.LAST_NAME;
 import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.WELCOME_LINK;
 
 import com.google.common.collect.ImmutableMap;
+
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -15,14 +17,12 @@ import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
 import uk.gov.hmcts.reform.pbis.model.EmailToSend;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 
-@Component
 public class EmailCreator {
 
     private final Map<String, EmailTemplateMapping> emailTemplateMappings;
 
-    @Autowired
-    public EmailCreator(ApplicationConfig applicationConfig) {
-        this.emailTemplateMappings = applicationConfig.getEmailTemplateMappings()
+    public EmailCreator(List<EmailTemplateMapping> mappings) {
+        this.emailTemplateMappings = mappings
             .stream()
             .collect(Collectors.toMap(
                 mapping -> mapping.getService(), Function.identity()

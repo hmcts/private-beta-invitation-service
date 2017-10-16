@@ -1,19 +1,17 @@
 package uk.gov.hmcts.reform.pbis;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.hmcts.reform.pbis.config.ApplicationConfig;
 import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
 import uk.gov.hmcts.reform.pbis.model.EmailToSend;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmailCreatorTest {
@@ -34,14 +32,9 @@ public class EmailCreatorTest {
     private EmailCreator emailCreator;
 
 
-    @Mock
-    private ApplicationConfig applicationConfig;
-
     @Before
     public void setUp() {
-        when(applicationConfig.getEmailTemplateMappings()).thenReturn(emailTemplateMappings);
-
-        emailCreator = new EmailCreator(applicationConfig);
+        emailCreator = new EmailCreator(emailTemplateMappings);
     }
 
     @Test(expected = ServiceNotFoundException.class)
