@@ -1,14 +1,11 @@
 package uk.gov.hmcts.reform.pbis.notify;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
 import uk.gov.hmcts.reform.pbis.ServiceNotFoundException;
-import uk.gov.hmcts.reform.pbis.config.ApplicationConfig;
 import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
 import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientApi;
@@ -66,11 +63,7 @@ public class NotificationClientProviderTest {
             createTemplateMapping(SERVICE_2_NAME, "apiKey2")
         );
 
-        ApplicationConfig config = mock(ApplicationConfig.class);
-        when(config.getEmailTemplateMappings()).thenReturn(emailTemplateMappings);
-
-        when(config.getUseNotifyClientStub()).thenReturn(useClientStub);
-        return new NotificationClientProvider(config);
+        return new NotificationClientProvider(emailTemplateMappings, useClientStub);
     }
 
     private static EmailTemplateMapping createTemplateMapping(String service, String apiKey) {

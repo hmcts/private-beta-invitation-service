@@ -11,17 +11,17 @@ import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
 import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientApi;
 
-@Component
+
 public class NotificationClientProvider {
 
     private final Map<String, NotificationClientApi> notificationClientsByService;
 
-    @Autowired
-    public NotificationClientProvider(ApplicationConfig config) {
-        notificationClientsByService = getApiClientsByService(
-            config.getEmailTemplateMappings(),
-            config.getUseNotifyClientStub()
-        );
+    public NotificationClientProvider(
+        List<EmailTemplateMapping> emailTemplateMappings,
+        boolean useClientStub
+    ) {
+        notificationClientsByService =
+            getApiClientsByService(emailTemplateMappings, useClientStub);
     }
 
     public NotificationClientApi getClient(String service) {
