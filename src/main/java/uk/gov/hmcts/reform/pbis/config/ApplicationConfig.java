@@ -2,8 +2,6 @@ package uk.gov.hmcts.reform.pbis.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -14,6 +12,7 @@ import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
 import uk.gov.hmcts.reform.pbis.notify.NotificationClientProvider;
 import uk.gov.hmcts.reform.pbis.servicebus.IServiceBusClientFactory;
 import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusClientFactory;
+import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusClientStub;
 
 
 @Configuration
@@ -55,8 +54,6 @@ public class ApplicationConfig {
     @Bean
     @ConditionalOnProperty(name = "serviceBus.useStub", havingValue = "true")
     public IServiceBusClientFactory getServiceBusClientStubFactory() {
-        return () -> {
-            throw new UnsupportedOperationException("Service client stub not implemented");
-        };
+        return () -> ServiceBusClientStub.getInstance();
     }
 }
