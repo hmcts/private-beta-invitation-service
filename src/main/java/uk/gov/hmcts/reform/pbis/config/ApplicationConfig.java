@@ -2,13 +2,19 @@ package uk.gov.hmcts.reform.pbis.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.hmcts.reform.pbis.EmailCreator;
 import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
 import uk.gov.hmcts.reform.pbis.notify.NotificationClientProvider;
+import uk.gov.hmcts.reform.pbis.servicebus.IServiceBusClientFactory;
+import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusClientFactory;
+
 
 @Configuration
 @ConfigurationProperties
@@ -16,6 +22,12 @@ public class ApplicationConfig {
 
     @Value("${notify.useStub}")
     private boolean useNotifyClientStub;
+
+    @Value("${serviceBus.useStub}")
+    private boolean useServiceBusClientStub;
+
+    @Value("${serviceBus.connectionString}")
+    private String serviceBusConnectionString;
 
     private final List<EmailTemplateMapping> emailTemplateMappings = new ArrayList<>();
 
@@ -32,5 +44,19 @@ public class ApplicationConfig {
     @Bean
     public NotificationClientProvider getNotificationClientProvider() {
         return new NotificationClientProvider(emailTemplateMappings, useNotifyClientStub);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "serviceBus.useStub", havingValue = "false")
+    public IServiceBusClientFactory getServiceBusClientFactory() {
+        return new ServiceBusClientFactory(serviceBusConnectionString);
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "serviceBus.useStub", havingValue = "true")
+    public IServiceBusClientFactory getServiceBusClientStubFactory() {
+        return () -> {
+            throw new UnsupportedOperationException("Service client stub not implemented");
+        };
     }
 }

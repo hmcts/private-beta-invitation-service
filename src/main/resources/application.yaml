@@ -8,6 +8,11 @@ management:
 notify:
   useStub: ${NOTIFY_USE_STUB:false}
 
+serviceBus:
+  useStub: ${SERVICE_BUS_USE_STUB:false}
+  connectionString: ${SERVICE_BUS_CONNECTION_STRING:}
+  pollingDelayInMs: ${SERVICE_BUS_POLLING_DELAY_MS:30000}
+
 emailTemplateMappings:
 
 ---
@@ -16,6 +21,10 @@ spring:
 
 notify:
   useStub: true
+
+serviceBus:
+  useStub: true
+  pollingDelayInMs: ${SERVICE_BUS_POLLING_DELAY_MS:5000}
 
 emailTemplateMappings:
   - service: 'test-service-1'
