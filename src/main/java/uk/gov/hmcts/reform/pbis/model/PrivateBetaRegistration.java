@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.pbis.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public final class PrivateBetaRegistration {
 
     public final String referenceId;
@@ -10,11 +12,11 @@ public final class PrivateBetaRegistration {
 
 
     public PrivateBetaRegistration(
-        final String referenceId,
-        final String service,
-        final String emailAddress,
-        final String firstName,
-        final String lastName
+        @JsonProperty("reference_id") final String referenceId,
+        @JsonProperty("service") final String service,
+        @JsonProperty("email_address") final String emailAddress,
+        @JsonProperty("first_name") final String firstName,
+        @JsonProperty("last_name") final String lastName
     ) {
         this.referenceId = referenceId;
         this.service = service;
