@@ -1,5 +1,7 @@
 # Private Beta Invitation Service
 
+[![Build Status](https://travis-ci.org/hmcts/private-beta-invitation-service.svg?branch=master)](https://travis-ci.org/hmcts/private-beta-invitation-service)
+
 This project is a service that sends private beta welcome emails to citizens. It constantly checks if there is
 a new person that has agreed to join private beta and if there is one,
 it calls [GOV.UK Notify](https://www.gov.uk/government/publications/govuk-notify)
