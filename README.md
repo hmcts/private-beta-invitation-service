@@ -1,5 +1,6 @@
 # Private Beta Invitation Service
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7cf5461dde5149338d6029cabe2c6606)](https://www.codacy.com/app/lgonczar/private-beta-invitation-service?utm_source=github.com&utm_medium=referral&utm_content=hmcts/private-beta-invitation-service&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/hmcts/private-beta-invitation-service.svg?branch=master)](https://travis-ci.org/hmcts/private-beta-invitation-service)
 
 This project is a service that sends private beta welcome emails to citizens. It constantly checks if there is
