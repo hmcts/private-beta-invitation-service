@@ -10,14 +10,20 @@ services:
         - https_proxy
         - no_proxy
     environment:
-      # these environment variables are used by java-logging library
+      # variables used by java-logging library
       - ROOT_APPENDER
       - JSON_CONSOLE_PRETTY_PRINT
       - ROOT_LOGGING_LEVEL
       - REFORM_SERVICE_NAME
       - REFORM_TEAM
       - REFORM_ENVIRONMENT
+      # application-specific variables
       - SPRING_PROFILES_ACTIVE
+      - NOTIFY_USE_STUB
+      - NOTIFY_DEFAULT_API_KEY
+      - SERVICE_BUS_POLLING_DELAY_MS
+      - SERVICE_BUS_USE_STUB
+      - SERVICE_BUS_CONNECTION_STRING
     volumes:
       - ./build/install/private-beta-invitation-service:/opt/app/
     ports:
