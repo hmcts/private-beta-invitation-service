@@ -22,9 +22,6 @@ public class ApplicationConfig {
     @Value("${notify.useStub}")
     private boolean useNotifyClientStub;
 
-    @Value("${serviceBus.useStub}")
-    private boolean useServiceBusClientStub;
-
     @Value("${serviceBus.connectionString}")
     private String serviceBusConnectionString;
 
