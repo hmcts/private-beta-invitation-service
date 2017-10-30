@@ -105,3 +105,7 @@ task functionalTest(type: Test) {
   testClassesDir sourceSets.functionalTest.output.classesDir
   setClasspath sourceSets.functionalTest.runtimeClasspath
 }
+
+jar {
+  baseName 'private-beta-invitation-service'
+}
