@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.pbis.servicebus;
 
 import com.microsoft.azure.servicebus.IMessage;
-import com.microsoft.azure.servicebus.primitives.ServiceBusException;
 
 import java.util.UUID;
 
