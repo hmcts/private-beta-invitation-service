@@ -11,6 +11,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.microsoft.azure.servicebus.IMessage;
 import com.microsoft.azure.servicebus.IMessageReceiver;
+
+import java.time.Duration;
 import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +24,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class ServiceBusClientTest {
 
+    private static final Duration MAX_RECEIVE_TIME = Duration.ofMillis(1);
+
     @Mock
     private IMessageReceiver messageReceiver;
 
@@ -29,16 +33,16 @@ public class ServiceBusClientTest {
 
     @Before
     public void setUp() {
-        client = new ServiceBusClient(messageReceiver);
+        client = new ServiceBusClient(messageReceiver, MAX_RECEIVE_TIME);
     }
 
     @Test
     public void receiveMessage_should_call_receiver() throws Exception {
         IMessage expectedMessage = mock(IMessage.class);
-        given(messageReceiver.receive()).willReturn(expectedMessage);
+        given(messageReceiver.receive(any())).willReturn(expectedMessage);
 
         assertSame(expectedMessage, client.receiveMessage());
-        verify(messageReceiver).receive();
+        verify(messageReceiver).receive(MAX_RECEIVE_TIME);
         verifyNoMoreInteractions(messageReceiver);
     }
 
@@ -47,7 +51,7 @@ public class ServiceBusClientTest {
         Exception expectedCause =
             new com.microsoft.azure.servicebus.primitives.ServiceBusException(true);
 
-        given(messageReceiver.receive()).willThrow(expectedCause);
+        given(messageReceiver.receive(any())).willThrow(expectedCause);
 
         assertThatThrownBy(() -> client.receiveMessage())
             .isInstanceOf(ServiceBusException.class)

@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.pbis.config;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,9 @@ public class ApplicationConfig {
     @Value("${serviceBus.connectionString}")
     private String serviceBusConnectionString;
 
+    @Value("${serviceBus.maxReceiveWaitTimeInMs}")
+    private long maxReceiveWaitTimeMs;
+
     private final List<EmailTemplateMapping> emailTemplateMappings = new ArrayList<>();
 
     // this getter is needed by the framework
@@ -45,7 +49,10 @@ public class ApplicationConfig {
     @Bean
     @ConditionalOnProperty(name = "serviceBus.useStub", havingValue = "false")
     public IServiceBusClientFactory getServiceBusClientFactory() {
-        return new ServiceBusClientFactory(serviceBusConnectionString);
+        return new ServiceBusClientFactory(
+            serviceBusConnectionString,
+            Duration.ofMillis(maxReceiveWaitTimeMs)
+        );
     }
 
     @Bean
