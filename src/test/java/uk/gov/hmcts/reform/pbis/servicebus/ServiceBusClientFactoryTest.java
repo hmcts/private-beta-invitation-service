@@ -14,6 +14,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 import com.microsoft.azure.servicebus.ClientFactory;
 import com.microsoft.azure.servicebus.IMessageReceiver;
+import java.time.Duration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,12 +28,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class ServiceBusClientFactoryTest {
 
     private static final String CONNECTION_STRING = "connection string";
+    private static final Duration MAX_RECEIVE_TIME = Duration.ofMillis(1);
 
     private ServiceBusClientFactory clientFactory;
 
     @Before
     public void setUp() throws Exception {
-        clientFactory = new ServiceBusClientFactory(CONNECTION_STRING);
+        clientFactory = new ServiceBusClientFactory(CONNECTION_STRING, MAX_RECEIVE_TIME);
 
         mockStatic(ClientFactory.class);
     }
@@ -51,7 +53,7 @@ public class ServiceBusClientFactoryTest {
         // make sure the returned client uses the receiver
         verify(messageReceiver, never()).receive();
         client.receiveMessage();
-        verify(messageReceiver).receive();
+        verify(messageReceiver).receive(MAX_RECEIVE_TIME);
 
         PowerMockito.verifyStatic(ClientFactory.class, times(1));
         ClientFactory.createMessageReceiverFromConnectionString(eq(CONNECTION_STRING), any());

@@ -12,5 +12,6 @@ serviceBus:
   useStub: ${SERVICE_BUS_USE_STUB:false}
   connectionString: ${SERVICE_BUS_CONNECTION_STRING:}
   pollingDelayInMs: ${SERVICE_BUS_POLLING_DELAY_MS:30000}
+  maxReceiveWaitTimeInMs: ${SERVICE_BUS_MAX_RECEIVE_WAIT_TIME_MS:30000}
 
 emailTemplateMappings:
