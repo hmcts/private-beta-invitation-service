@@ -5,6 +5,7 @@ import com.microsoft.azure.servicebus.IMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.pbis.EmailService;
@@ -16,6 +17,7 @@ import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
  * <p>It reads the whole queue and sends a welcome email based on the content of each message.</p>
  */
 @Service
+@ConditionalOnProperty(value = "scheduling.enable", havingValue = "true", matchIfMissing = true)
 public class MessageQueueProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageQueueProcessor.class);
