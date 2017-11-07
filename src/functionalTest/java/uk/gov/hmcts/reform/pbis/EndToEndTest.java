@@ -24,7 +24,7 @@ import uk.gov.service.notify.Notification;
 
 
 @Category(EndToEndTests.class)
-public class SubscriptionProcessingTest {
+public class EndToEndTest {
 
     private static final Configuration config = new Configuration();
 
