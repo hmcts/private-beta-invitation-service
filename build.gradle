@@ -101,9 +101,13 @@ dependencies {
 }
 
 task functionalTest(type: Test) {
-  description = "Runs Functional Tests"
+  description = "Runs end-to-end tests"
   testClassesDir sourceSets.functionalTest.output.classesDir
   setClasspath sourceSets.functionalTest.runtimeClasspath
+
+  useJUnit {
+    includeCategories 'uk.gov.hmcts.reform.pbis.categories.EndToEndTests'
+  }
 }
 
 jar {
