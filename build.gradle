@@ -100,7 +100,7 @@ dependencies {
   )
 }
 
-task functionalTest(type: Test) {
+task endToEndTest(type: Test) {
   description = "Runs end-to-end tests"
   testClassesDir sourceSets.functionalTest.output.classesDir
   setClasspath sourceSets.functionalTest.runtimeClasspath
