@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.pbis;
+package uk.gov.hmcts.reform.pbis.integration;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,6 +23,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.gov.hmcts.reform.pbis.EmailService;
 import uk.gov.hmcts.reform.pbis.categories.IntegrationTests;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.servicebus.IServiceBusClient;

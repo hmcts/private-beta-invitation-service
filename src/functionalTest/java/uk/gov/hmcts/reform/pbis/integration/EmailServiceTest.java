@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.pbis;
+package uk.gov.hmcts.reform.pbis.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,6 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import uk.gov.hmcts.reform.pbis.Configuration;
+import uk.gov.hmcts.reform.pbis.EmailCreator;
+import uk.gov.hmcts.reform.pbis.EmailSendingException;
+import uk.gov.hmcts.reform.pbis.EmailService;
 import uk.gov.hmcts.reform.pbis.categories.IntegrationTests;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.notify.NotificationClientProvider;

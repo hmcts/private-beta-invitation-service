@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.pbis;
+package uk.gov.hmcts.reform.pbis.integration;
 
 import com.microsoft.azure.servicebus.IMessage;
 import java.util.HashMap;
@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.hmcts.reform.pbis.Configuration;
 import uk.gov.hmcts.reform.pbis.servicebus.IServiceBusClient;
 import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusClientFactory;
 import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusException;

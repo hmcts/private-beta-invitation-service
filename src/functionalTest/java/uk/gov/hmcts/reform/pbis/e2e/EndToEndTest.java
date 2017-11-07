@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.pbis;
+package uk.gov.hmcts.reform.pbis.e2e;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Java6Assertions.assertThat;
@@ -16,6 +16,7 @@ import org.awaitility.Duration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import uk.gov.hmcts.reform.pbis.Configuration;
 import uk.gov.hmcts.reform.pbis.categories.EndToEndTests;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.utils.NotificationHelper;
