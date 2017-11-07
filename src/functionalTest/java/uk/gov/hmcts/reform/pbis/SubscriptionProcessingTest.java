@@ -3,11 +3,11 @@ package uk.gov.hmcts.reform.pbis;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleRegistration;
 
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,10 +16,9 @@ import org.awaitility.Duration;
 import org.junit.Before;
 import org.junit.Test;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
+import uk.gov.hmcts.reform.pbis.utils.NotificationHelper;
 import uk.gov.hmcts.reform.pbis.utils.ServiceBusFeeder;
 import uk.gov.service.notify.Notification;
-import uk.gov.service.notify.NotificationClient;
-import uk.gov.service.notify.NotificationClientException;
 
 
 public class SubscriptionProcessingTest {
@@ -32,12 +31,12 @@ public class SubscriptionProcessingTest {
     );
 
     private ServiceBusFeeder serviceBusFeeder;
-    private NotificationClient notificationClient;
+    private NotificationHelper notificationHelper;
 
     @Before
     public void setUp() throws ServiceBusException, InterruptedException {
         serviceBusFeeder = new ServiceBusFeeder(config.getServiceBusConnectionString());
-        notificationClient = new NotificationClient(config.getNotifyApiKey());
+        notificationHelper = new NotificationHelper(config.getNotifyApiKey());
     }
 
     @Test
@@ -49,7 +48,7 @@ public class SubscriptionProcessingTest {
 
         waitUntilRegistrationIsProcessed(registration.referenceId);
 
-        List<Notification> emails = getSentEmails(registration.referenceId);
+        List<Notification> emails = notificationHelper.getSentEmails(registration.referenceId);
 
         assertThat(emails).hasSize(1);
         Notification email = emails.get(0);
@@ -81,7 +80,8 @@ public class SubscriptionProcessingTest {
         serviceBusFeeder.sendMessage(registrationWithKnownService);
         waitUntilRegistrationIsProcessed(registrationWithKnownService.referenceId);
 
-        List<Notification> sentEmails = getSentEmails(registrationWithUnknownService.referenceId);
+        List<Notification> sentEmails =
+            notificationHelper.getSentEmails(registrationWithUnknownService.referenceId);
 
         assertThat(sentEmails).isEmpty();
     }
@@ -106,38 +106,15 @@ public class SubscriptionProcessingTest {
             .map(r -> r.referenceId)
             .collect(Collectors.toList());
 
-        assertThat(referenceIds).allMatch(referenceId -> getSentEmails(referenceId).size() == 1);
+        assertThat(referenceIds).allMatch(
+            referenceId -> notificationHelper.getSentEmails(referenceId).size() == 1
+        );
     }
 
     private void waitUntilRegistrationIsProcessed(String referenceId) {
         await()
             .atMost(MAX_WAIT_TIME)
             .pollDelay(500, MILLISECONDS)
-            .until(() -> !getSentEmails(referenceId).isEmpty());
-    }
-
-    private List<Notification> getSentEmails(String reference) {
-        try {
-            return notificationClient.getNotifications(
-                null,
-                null,
-                reference,
-                null
-            ).getNotifications();
-        } catch (NotificationClientException e) {
-            throw new RuntimeException("Failed to retrieve emails", e);
-        }
-    }
-
-    private PrivateBetaRegistration getSampleRegistration(String service) {
-        String reference = "pbis-functional-test-" + UUID.randomUUID().toString();
-
-        return new PrivateBetaRegistration(
-            reference,
-            service,
-            "john.smith@example.com",
-            "John",
-            "Smith"
-        );
+            .until(() -> !notificationHelper.getSentEmails(referenceId).isEmpty());
     }
 }
