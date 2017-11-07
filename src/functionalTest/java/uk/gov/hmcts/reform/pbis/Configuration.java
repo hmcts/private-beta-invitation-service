@@ -31,4 +31,8 @@ public class Configuration {
     public long getServiceBusPollingDelayInMs() {
         return config.getLong("serviceBus.pollingDelayInMs");
     }
+
+    public long getMessageLockTimeoutInMs() {
+        return config.getLong("serviceBus.messageLockTimeoutInMs");
+    }
 }
