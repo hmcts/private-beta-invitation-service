@@ -105,7 +105,7 @@ Once you've got those variables set, you can run end-to-end tests:
   ./gradlew endToEndTest
 ```
 
-Functional tests don't manage the service - they simply assume it's running. Therefore, if you
+End-to-end tests don't manage the service - they simply assume it's running. Therefore, if you
 run tests locally, make sure you've started your instance (`./gradlew run-test-env`).
 
 ## Hystrix dashboard
