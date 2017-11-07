@@ -80,13 +80,13 @@ You should get a response similar to this:
   {"status":"UP","diskSpace":{"status":"UP","total":249644974080,"free":137188298752,"threshold":10485760}}
 ```
 
-### Running functional tests
+### Running end-to-end tests
 
-Functional tests verify if the service is working as expected by talking to its dependencies -
+End-to-end tests verify if the service is working as expected by talking to its dependencies -
  they feed the Azure Service Bus topic and verify if GOV.UK Notify has (or hasn't) sent
  appropriate emails. In order to test the right instance of the service you have to make sure
- that functional tests are talking to the right Azure Service Bus instance and feed the right topic.
- Here are the environment variables that you need to set for functional tests:
+ that the tests are talking to the right Azure Service Bus instance and feed the right topic.
+ Here are the environment variables that you need to set for end-to-end tests:
 
  - `TEST_NOTIFY_API_KEY` - test API key for GOV.UK Notify. This key is used by GOV.UK Notify
  client to authenticate. The client, in term, is used for retrieving information about emails
@@ -100,9 +100,9 @@ Functional tests verify if the service is working as expected by talking to its 
  for results (i.e. emails sent) before they should fail.
 
 
-Once you've got those variables set, you can run functional tests:
+Once you've got those variables set, you can run end-to-end tests:
 ```bash
-  ./gradlew functionalTest
+  ./gradlew endToEndTest
 ```
 
 Functional tests don't manage the service - they simply assume it's running. Therefore, if you
