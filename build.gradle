@@ -110,6 +110,16 @@ task endToEndTest(type: Test) {
   }
 }
 
+task integrationTest(type: Test) {
+  description = "Runs integration tests"
+  testClassesDir sourceSets.functionalTest.output.classesDir
+  setClasspath sourceSets.functionalTest.runtimeClasspath
+
+  useJUnit {
+    includeCategories 'uk.gov.hmcts.reform.pbis.categories.IntegrationTests'
+  }
+}
+
 jar {
   baseName 'private-beta-invitation-service'
 }

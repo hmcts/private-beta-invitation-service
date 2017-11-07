@@ -26,6 +26,15 @@ public class ServiceBusFeeder implements AutoCloseable {
         topicClient = new TopicClient(new ConnectionStringBuilder(connectionString));
     }
 
+    public void sendMessages(
+        String... messageContents
+    ) throws ServiceBusException, InterruptedException {
+
+        for (String content: messageContents) {
+            sendMessage(content);
+        }
+    }
+
     public void sendMessage(
         PrivateBetaRegistration registration
     ) throws JsonProcessingException, ServiceBusException, InterruptedException {
@@ -40,6 +49,12 @@ public class ServiceBusFeeder implements AutoCloseable {
         logger.info(
             String.format("Registration sent. Reference Id: %s", registration.referenceId)
         );
+    }
+
+    public void sendMessage(String content) throws ServiceBusException, InterruptedException {
+        logger.info(String.format("Sending message with content: %s", content));
+        topicClient.send(new Message(content));
+        logger.info(String.format("Sent message with content: %s", content));
     }
 
     @Override
