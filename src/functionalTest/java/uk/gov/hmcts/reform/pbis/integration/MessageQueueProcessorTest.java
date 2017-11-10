@@ -14,6 +14,7 @@ import com.microsoft.azure.servicebus.IMessage;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
+import javax.validation.Validator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +41,9 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
     @Mock
     private EmailService emailService;
 
+    @Mock
+    private Validator validator;
+
     private MessageQueueProcessor messageQueueProcessor;
 
     @Override
@@ -49,7 +53,12 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
 
         // using the spy here in order to keep track of received messages
         IServiceBusClientFactory clientFactorySpy = prepareServiceBusClientFactorySpy();
-        messageQueueProcessor = new MessageQueueProcessor(clientFactorySpy, emailService);
+
+        messageQueueProcessor = new MessageQueueProcessor(
+            clientFactorySpy,
+            emailService,
+            validator
+        );
     }
 
     @Override
