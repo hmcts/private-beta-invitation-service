@@ -1,13 +1,25 @@
 package uk.gov.hmcts.reform.pbis.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 
 public final class PrivateBetaRegistration {
 
+    @NotEmpty
     public final String referenceId;
+
+    @NotEmpty
     public final String service;
+
+    @NotEmpty
+    @Email
     public final String emailAddress;
+
+    @NotEmpty
     public final String firstName;
+
+    @NotEmpty
     public final String lastName;
 
 
