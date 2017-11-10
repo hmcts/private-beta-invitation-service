@@ -3,6 +3,9 @@ package uk.gov.hmcts.reform.pbis.config;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -59,5 +62,11 @@ public class ApplicationConfig {
     @ConditionalOnProperty(name = "serviceBus.useStub", havingValue = "true")
     public IServiceBusClientFactory getServiceBusClientStubFactory() {
         return () -> ServiceBusClientStub.getInstance();
+    }
+
+    @Bean
+    public Validator getValidator() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        return factory.getValidator();
     }
 }

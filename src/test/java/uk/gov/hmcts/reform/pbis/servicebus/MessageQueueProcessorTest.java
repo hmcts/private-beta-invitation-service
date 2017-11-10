@@ -14,9 +14,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.IMessage;
 import com.microsoft.azure.servicebus.Message;
-
 import java.util.List;
 import java.util.UUID;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,19 +43,33 @@ public class MessageQueueProcessorTest {
     @Mock
     private EmailService emailService;
 
+    @Mock
+    private Validator validator;
+
     private MessageQueueProcessor messageQueueProcessor;
 
     @Before
     public void setUp() {
         given(clientFactory.createClient()).willReturn(client);
 
-        messageQueueProcessor = new MessageQueueProcessor(clientFactory, emailService);
+        // make the mock validator use a real validator for validating (can't spy - final class)
+        given(validator.validate(any())).willAnswer(invocation -> {
+            PrivateBetaRegistration registration =
+                invocation.getArgumentAt(0, PrivateBetaRegistration.class);
+
+            return Validation
+                .buildDefaultValidatorFactory()
+                .getValidator()
+                .validate(registration);
+        });
+
+        messageQueueProcessor = new MessageQueueProcessor(clientFactory, emailService, validator);
     }
 
     @Test
     public void run_should_send_emails_as_long_as_there_are_messages() throws Exception {
-        PrivateBetaRegistration registration1 = getSampleRegistration();
-        PrivateBetaRegistration registration2 = getSampleRegistration();
+        PrivateBetaRegistration registration1 = getValidRegistration();
+        PrivateBetaRegistration registration2 = getValidRegistration();
 
         IMessage message1 = createMessage(registration1);
         IMessage message2 = createMessage(registration2);
@@ -74,6 +89,59 @@ public class MessageQueueProcessorTest {
     }
 
     @Test
+    public void run_should_validate_every_well_formed_message() throws Exception {
+        PrivateBetaRegistration validRegistration = getValidRegistration();
+        PrivateBetaRegistration invalidRegistration = getInvalidRegistration();
+
+        IMessage message1 = createMessage(validRegistration);
+        IMessage message2 = new Message("invalid format");
+        IMessage message3 = createMessage(invalidRegistration);
+
+        given(client.receiveMessage()).willReturn(message1, message2, message3, null);
+
+        messageQueueProcessor.run();
+
+        ArgumentCaptor<PrivateBetaRegistration> registrationCaptor
+            = ArgumentCaptor.forClass(PrivateBetaRegistration.class);
+
+        verify(validator, times(2)).validate(registrationCaptor.capture());
+        List<PrivateBetaRegistration> registrations = registrationCaptor.getAllValues();
+
+        assertThat(registrations.get(0))
+            .isEqualToComparingFieldByFieldRecursively(validRegistration);
+
+        assertThat(registrations.get(1))
+            .isEqualToComparingFieldByFieldRecursively(invalidRegistration);
+    }
+
+    @Test
+    public void run_should_not_send_emails_for_invalid_messages() throws Exception {
+        PrivateBetaRegistration invalidRegistration = getInvalidRegistration();
+        PrivateBetaRegistration validRegistration = getValidRegistration();
+
+        IMessage message1 = createMessage(invalidRegistration);
+        IMessage message2 = createMessage(validRegistration);
+        IMessage message3 = new Message("invalid format");
+
+        given(client.receiveMessage()).willReturn(message1, message2, message3, null);
+
+        messageQueueProcessor.run();
+
+        ArgumentCaptor<PrivateBetaRegistration> registrationCaptor
+            = ArgumentCaptor.forClass(PrivateBetaRegistration.class);
+
+        verify(emailService).sendWelcomeEmail(registrationCaptor.capture());
+
+        assertThat(registrationCaptor.getValue()).isNotNull();
+
+        assertThat(registrationCaptor.getValue())
+            .as("registration passed to email service")
+            .isEqualToComparingFieldByFieldRecursively(validRegistration);
+
+        verifyNoMoreInteractions(emailService);
+    }
+
+    @Test
     public void run_should_abort_when_service_bus_client_fails() throws Exception {
         Exception exception = new ServiceBusException("test exception", null);
         given(client.receiveMessage()).willThrow(exception);
@@ -88,8 +156,8 @@ public class MessageQueueProcessorTest {
 
     @Test
     public void run_should_complete_each_successfully_processed_message() throws Exception {
-        IMessage message1 = createMessage(getSampleRegistration());
-        IMessage message2 = createMessage(getSampleRegistration());
+        IMessage message1 = createMessage(getValidRegistration());
+        IMessage message2 = createMessage(getValidRegistration());
 
         given(client.receiveMessage()).willReturn(message1, message2, null);
 
@@ -112,7 +180,7 @@ public class MessageQueueProcessorTest {
             .given(emailService)
             .sendWelcomeEmail(any());
 
-        IMessage message = createMessage(getSampleRegistration());
+        IMessage message = createMessage(getValidRegistration());
         given(client.receiveMessage()).willReturn(message, message, null);
 
         messageQueueProcessor.run();
@@ -127,7 +195,7 @@ public class MessageQueueProcessorTest {
             .given(emailService)
             .sendWelcomeEmail(any());
 
-        IMessage message = createMessage(getSampleRegistration());
+        IMessage message = createMessage(getValidRegistration());
         given(client.receiveMessage()).willReturn(message, message, null);
 
         messageQueueProcessor.run();
@@ -183,9 +251,23 @@ public class MessageQueueProcessorTest {
         return message;
     }
 
-    private PrivateBetaRegistration getSampleRegistration() {
+    private PrivateBetaRegistration getValidRegistration() {
         return new PrivateBetaRegistration(
-            "reference id 123", "service 123", "email@example.com", "John", "Smith"
+            "reference id " + UUID.randomUUID().toString(),
+            "service 123",
+            "email@example.com",
+            "John",
+            "Smith"
+        );
+    }
+
+    private PrivateBetaRegistration getInvalidRegistration() {
+        return new PrivateBetaRegistration(
+            "reference id " + UUID.randomUUID().toString(),
+            "",
+            "not an email",
+            "",
+            ""
         );
     }
 }
