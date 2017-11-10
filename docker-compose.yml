@@ -24,6 +24,7 @@ services:
       - SERVICE_BUS_POLLING_DELAY_MS
       - SERVICE_BUS_USE_STUB
       - SERVICE_BUS_CONNECTION_STRING
+      - SERVICE_BUS_MAX_RECEIVE_WAIT_TIME_MS
     volumes:
       - ./build/install/private-beta-invitation-service:/opt/app/
     ports:
