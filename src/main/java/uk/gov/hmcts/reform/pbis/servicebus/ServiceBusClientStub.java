@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.pbis.servicebus;
 import com.microsoft.azure.servicebus.IMessage;
 
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
 
@@ -27,6 +28,16 @@ public class ServiceBusClientStub implements IServiceBusClient {
 
     @Override
     public void completeMessage(String messageId, UUID messageLockToken) {
+        // nothing to be done
+    }
+
+    @Override
+    public void sendToDeadLetter(
+        IMessage message,
+        String reason,
+        String description,
+        Map<String, String> propertiesToModify
+    ) {
         // nothing to be done
     }
 

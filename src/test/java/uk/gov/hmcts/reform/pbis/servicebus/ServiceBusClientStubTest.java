@@ -16,7 +16,6 @@ public class ServiceBusClientStubTest {
 
     private ServiceBusClientStub clientStub = ServiceBusClientStub.getInstance();
 
-
     @Test
     public void receiveMessage_should_return_null_when_queue_is_empty() {
         clientStub.setMessagesToReceive(new LinkedList<>());
@@ -55,6 +54,13 @@ public class ServiceBusClientStubTest {
     public void completeMessage_should_not_throw_exception() {
         assertThatCode(() -> {
             clientStub.completeMessage("message-id-123", UUID.randomUUID());
+        }).doesNotThrowAnyException();
+    }
+
+    @Test
+    public void sendToDeadLetter_should_not_throw_exception() {
+        assertThatCode(() -> {
+            clientStub.sendToDeadLetter(mock(IMessage.class), "reason", "desc", null);
         }).doesNotThrowAnyException();
     }
 
