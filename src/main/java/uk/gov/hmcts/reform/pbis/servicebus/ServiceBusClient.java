@@ -4,7 +4,9 @@ import com.microsoft.azure.servicebus.IMessage;
 import com.microsoft.azure.servicebus.IMessageReceiver;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 public class ServiceBusClient implements IServiceBusClient {
@@ -39,7 +41,43 @@ public class ServiceBusClient implements IServiceBusClient {
     }
 
     @Override
+    public void sendToDeadLetter(
+        IMessage message,
+        String reason,
+        String description,
+        Map<String, String> fieldValidationErrors
+    ) {
+        try {
+            messageReceiver.deadLetter(
+                message.getLockToken(),
+                reason,
+                description,
+                toMapOfObjects(fieldValidationErrors)
+            );
+        } catch (Exception e) {
+            String errorMessage = String.format(
+                "Failed to send message to dead letter queue. Message ID: %s",
+                message.getMessageId()
+            );
+
+            throw new ServiceBusException(errorMessage, e);
+        }
+    }
+
+    @Override
     public void close() throws Exception {
         this.messageReceiver.close();
+    }
+
+    private Map<String, Object> toMapOfObjects(
+        Map<String, String> stringMap
+    ) {
+        if (stringMap != null) {
+            return stringMap.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        } else {
+            return null;
+        }
     }
 }
