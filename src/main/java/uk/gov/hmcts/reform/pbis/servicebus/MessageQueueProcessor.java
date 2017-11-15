@@ -158,8 +158,8 @@ public class MessageQueueProcessor {
         MessageProcessingResult.ProcessingError processingError,
         IMessage message
     ) {
-        String invalidFieldDetails = processingError.invalidFields != null
-            ? " (" + processingError.invalidFields + ")"
+        String invalidFieldDetails = processingError.fieldValidationErrors != null
+            ? " (" + processingError.fieldValidationErrors + ")"
             : "";
 
         logger.warn(
