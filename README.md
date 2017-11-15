@@ -91,9 +91,10 @@ End-to-end tests verify if the service is working as expected by talking to its 
  - `TEST_NOTIFY_API_KEY` - test API key for GOV.UK Notify. This key is used by GOV.UK Notify
  client to authenticate. The client, in term, is used for retrieving information about emails
  that have been sent.
- - `TEST_SERVICE_BUS_CONNECTION_STRING` - connection string to Azure Service Bus,
- including the topic as entity path. This connection string is used for feeding the topic with
- test messages.
+ - `TEST_SERVICE_BUS_CONNECTION_STRING` - connection string to Azure Service Bus namespace
+ (doesn't include entity path). This connection string is used for feeding the topic with
+ test messages - something the service doesn't do
+ - `TEST_SERVICE_BUS_TOPIC` - name of the Azure Service Bus topic the tests feed with data
  - `TEST_SERVICE_BUS_POLLING_DELAY_MS` - the delay, in milliseconds, between consecutive
  Azure Service Bus message processing runs. This is for how long the service may not pick up
  messages from the subscription. Therefore, the tests need to know how long they should wait

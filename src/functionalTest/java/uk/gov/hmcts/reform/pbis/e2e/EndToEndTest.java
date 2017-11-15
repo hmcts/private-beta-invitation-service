@@ -10,15 +10,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.assertj.core.api.SoftAssertions;
 import org.awaitility.Duration;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import uk.gov.hmcts.reform.pbis.Configuration;
 import uk.gov.hmcts.reform.pbis.categories.EndToEndTests;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
+import uk.gov.hmcts.reform.pbis.utils.DeadLetterQueueHelper;
 import uk.gov.hmcts.reform.pbis.utils.NotificationHelper;
 import uk.gov.hmcts.reform.pbis.utils.ServiceBusFeeder;
 import uk.gov.service.notify.Notification;
@@ -36,11 +37,31 @@ public class EndToEndTest {
 
     private ServiceBusFeeder serviceBusFeeder;
     private NotificationHelper notificationHelper;
+    private DeadLetterQueueHelper deadLetterQueueHelper;
 
     @Before
     public void setUp() throws ServiceBusException, InterruptedException {
-        serviceBusFeeder = new ServiceBusFeeder(config.getServiceBusConnectionString());
+        serviceBusFeeder = new ServiceBusFeeder(
+            config.getServiceBusNamespaceConnectionString(),
+            config.getServiceBusTopicName()
+        );
+
+        deadLetterQueueHelper = new DeadLetterQueueHelper(
+            config.getServiceBusNamespaceConnectionString(),
+            config.getServiceBusTopicName(),
+            config.getServiceBusSubscriptionName(),
+            config.getMaxReceiveWaitTime()
+        );
+
         notificationHelper = new NotificationHelper(config.getNotifyApiKey());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        deadLetterQueueHelper.clearDeadLetterQueue();
+
+        deadLetterQueueHelper.close();
+        serviceBusFeeder.close();
     }
 
     @Test
