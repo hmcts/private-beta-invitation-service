@@ -76,7 +76,7 @@ public class EmailServiceTest {
         PrivateBetaRegistration registrationWithUnknownService =
             SampleData.getSampleRegistration("unknown-service");
 
-        assertThatThrownBy( () ->
+        assertThatThrownBy(() ->
             emailService.sendWelcomeEmail(registrationWithUnknownService)
         )
             .isInstanceOf(EmailSendingException.class)
