@@ -71,18 +71,18 @@ public class MessageProcessingResult {
     public static class ProcessingError {
         public final String reason;
         public final String description;
-        public final Map<String, String> invalidFields;
+        public final Map<String, String> fieldValidationErrors;
         public final Exception exception;
 
         public ProcessingError(
             String reason,
             String description,
-            Map<String, String> invalidFields,
+            Map<String, String> fieldValidationErrors,
             Exception exception
         ) {
             this.reason = reason;
             this.description = description;
-            this.invalidFields = invalidFields;
+            this.fieldValidationErrors = fieldValidationErrors;
             this.exception = exception;
         }
     }
