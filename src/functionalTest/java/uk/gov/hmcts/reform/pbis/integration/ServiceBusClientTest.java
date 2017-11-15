@@ -125,7 +125,7 @@ public class ServiceBusClientTest extends AbstractServiceBusTest {
         return ImmutableMap.of(
             "DeadLetterReason", reason,
             "DeadLetterErrorDescription", description,
-            "validationErrors", objectMapper.writeValueAsString(validationErrors)
+            "ValidationErrors", objectMapper.writeValueAsString(validationErrors)
         );
     }
 
