@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class ServiceBusClient implements IServiceBusClient {
 
-    private static final String VALIDATION_ERRORS_PROPERTY_KEY = "validationErrors";
+    private static final String VALIDATION_ERRORS_PROPERTY_KEY = "ValidationErrors";
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final IMessageReceiver messageReceiver;

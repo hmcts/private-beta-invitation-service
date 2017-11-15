@@ -39,7 +39,7 @@ public class SendToDeadLetterTest extends AbstractServiceBusClientTest {
             message.getLockToken(),
             reason,
             description,
-            singletonMap("validationErrors", "{\"field1\":\"error1\",\"field2\":\"error2\"}")
+            singletonMap("ValidationErrors", "{\"field1\":\"error1\",\"field2\":\"error2\"}")
         );
 
         verifyNoMoreInteractions(messageReceiver);
