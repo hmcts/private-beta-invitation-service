@@ -96,20 +96,18 @@ public class ServiceBusClientTest extends AbstractServiceBusTest {
 
         String reason = "test dead letter reason";
         String description = "test error description";
-        Map<String, String> validationErrors = singletonMap("test-field-name", "test error message");
+        Map<String, String> validationErrors =
+            singletonMap("test-field-name", "test error message");
 
         sendMessageToDeadLetter(receivedMessage, reason, description, validationErrors);
 
-        IMessage message = deadLetterQueueHelper.receiveMessage();
-        assertThat(message).as("message in dead letter queue").isNotNull();
-        assertThat(new String(message.getBody())).as("message content").isEqualTo(messageContent);
-
-        Map<String, String> properties = message.getProperties();
-
-        Map<String, String> expectedProperties =
-            getExpectedProperties(reason, description, validationErrors);
-
-        assertThat(properties).as("dead letter message properties").isEqualTo(expectedProperties);
+        assertDeadLetterMessageIsAsExpected(
+            deadLetterQueueHelper.receiveMessage(),
+            messageContent,
+            reason,
+            description,
+            validationErrors
+        );
 
         assertThat(deadLetterQueueHelper.receiveMessage())
             .as("check dead letter queue is empty")
@@ -129,6 +127,29 @@ public class ServiceBusClientTest extends AbstractServiceBusTest {
         );
     }
 
+    private void assertDeadLetterMessageIsAsExpected(
+        IMessage message,
+        String expectedContent,
+        String expectedReason,
+        String expectedDescription,
+        Map<String, String> expectedValidationErrors
+    ) throws JsonProcessingException {
+
+        assertThat(message).as("message in dead letter queue").isNotNull();
+
+        assertThat(new String(message.getBody()))
+            .as("dead letter message content")
+            .isEqualTo(expectedContent);
+
+        Map<String, String> properties = message.getProperties();
+
+        Map<String, String> expectedProperties =
+            getExpectedProperties(expectedReason, expectedDescription, expectedValidationErrors);
+
+        assertThat(properties)
+            .as("dead letter message properties")
+            .isEqualTo(expectedProperties);
+    }
 
     private void assertSameMessage(IMessage actual, IMessage expected) {
         assertThat(actual).as("check if message is not empty").isNotNull();
