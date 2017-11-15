@@ -157,11 +157,11 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
     }
 
     /**
-     * Prepares a Service Bus client factory spy
+     * Prepares a Service Bus client factory spy.
      *
-     * The spy, instead of an actual client, creates a spy that serves as a proxy
+     * <p>The spy, instead of an actual client, creates a spy that serves as a proxy
      * to the client. This is required so that we can keep track of received messages
-     * and clean them up after tests.
+     * and clean them up after tests.</p>
      */
     private IServiceBusClientFactory prepareServiceBusClientFactorySpy() {
         IServiceBusClientFactory clientFactorySpy = spy(serviceBusClientFactory);
@@ -174,13 +174,13 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
     }
 
     /**
-     * Prepares a Service Bus client spy
+     * Prepares a Service Bus client spy.
      *
-     * The spy calls the actual client, but also keeps track of messages that
+     * <p>The spy calls the actual client, but also keeps track of messages that
      * have been received and not deleted. This allows for deleting those messages
      * after the test. Otherwise messages created in one test could affect
      * results of another test if their lock expires and they reappear
-     * in the subscription.
+     * in the subscription.</p>
      */
     private IServiceBusClient prepareServiceBusClientSpy() throws Exception {
         IServiceBusClient clientSpy = spy(serviceBusClient);
