@@ -3,6 +3,8 @@ package uk.gov.hmcts.reform.pbis;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
+import java.time.Duration;
+
 
 public class Configuration {
 
@@ -24,8 +26,16 @@ public class Configuration {
         return config.getString("notify.welcomeLink");
     }
 
-    public String getServiceBusConnectionString() {
-        return config.getString("serviceBus.connectionString");
+    public String getServiceBusNamespaceConnectionString() {
+        return config.getString("serviceBus.namespaceConnectionString");
+    }
+
+    public String getServiceBusTopicName() {
+        return config.getString("serviceBus.topic");
+    }
+
+    public String getServiceBusSubscriptionName() {
+        return config.getString("serviceBus.subscription");
     }
 
     public long getServiceBusPollingDelayInMs() {
@@ -34,5 +44,11 @@ public class Configuration {
 
     public long getMessageLockTimeoutInMs() {
         return config.getLong("serviceBus.messageLockTimeoutInMs");
+    }
+
+    public Duration getMaxReceiveWaitTime() {
+        return Duration.ofMillis(
+            config.getLong("serviceBus.maxReceiveWaitTimeInMs")
+        );
     }
 }

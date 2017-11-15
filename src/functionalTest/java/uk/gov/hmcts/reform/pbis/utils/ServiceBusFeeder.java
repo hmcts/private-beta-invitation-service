@@ -20,10 +20,13 @@ public class ServiceBusFeeder implements AutoCloseable {
     private final ITopicClient topicClient;
 
     public ServiceBusFeeder(
-        String connectionString
+        String namespaceConnectionString,
+        String subscriptionPath
     ) throws ServiceBusException, InterruptedException {
 
-        topicClient = new TopicClient(new ConnectionStringBuilder(connectionString));
+        topicClient = new TopicClient(
+            new ConnectionStringBuilder(namespaceConnectionString, subscriptionPath)
+        );
     }
 
     public void sendMessages(

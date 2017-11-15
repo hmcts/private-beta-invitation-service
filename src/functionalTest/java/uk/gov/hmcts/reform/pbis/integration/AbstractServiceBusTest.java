@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.pbis.integration;
 import com.microsoft.azure.servicebus.IMessage;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import uk.gov.hmcts.reform.pbis.Configuration;
 import uk.gov.hmcts.reform.pbis.servicebus.IServiceBusClient;
 import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusClientFactory;
 import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusException;
+import uk.gov.hmcts.reform.pbis.utils.DeadLetterQueueHelper;
 import uk.gov.hmcts.reform.pbis.utils.ServiceBusFeeder;
 
 
@@ -40,23 +40,33 @@ public abstract class AbstractServiceBusTest {
 
     protected IServiceBusClient serviceBusClient;
     protected ServiceBusFeeder serviceBusFeeder;
+    protected DeadLetterQueueHelper deadLetterQueueHelper;
 
     public void setUp() throws Exception {
         messagesToComplete.clear();
         serviceBusClient = serviceBusClientFactory.createClient();
-        serviceBusFeeder = new ServiceBusFeeder(testConfig.getServiceBusConnectionString());
+        serviceBusFeeder = new ServiceBusFeeder(
+            testConfig.getServiceBusNamespaceConnectionString(),
+            testConfig.getServiceBusTopicName()
+        );
+
+        deadLetterQueueHelper = createDeadLetterQueueHelper();
 
         // make sure the subscription is empty
         consumeAllMessagesFromSubscription();
+
+        deadLetterQueueHelper.clearDeadLetterQueue();
     }
 
     public void tearDown() throws Exception {
         // make sure messages received from the queue will not reappear during subsequent tests
         completeReceivedMessages();
         consumeAllMessagesFromSubscription();
+        deadLetterQueueHelper.clearDeadLetterQueue();
 
         serviceBusClient.close();
         serviceBusFeeder.close();
+        deadLetterQueueHelper.close();
     }
 
     protected IMessage receiveMessage() {
@@ -93,5 +103,14 @@ public abstract class AbstractServiceBusTest {
                 // e.g. when message lock expired
             }
         }
+    }
+
+    private DeadLetterQueueHelper createDeadLetterQueueHelper() throws Exception {
+        return new DeadLetterQueueHelper(
+            testConfig.getServiceBusNamespaceConnectionString(),
+            testConfig.getServiceBusTopicName(),
+            testConfig.getServiceBusSubscriptionName(),
+            testConfig.getMaxReceiveWaitTime()
+        );
     }
 }

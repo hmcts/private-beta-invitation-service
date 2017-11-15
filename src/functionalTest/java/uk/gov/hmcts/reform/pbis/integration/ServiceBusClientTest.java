@@ -1,10 +1,19 @@
 package uk.gov.hmcts.reform.pbis.integration;
 
+import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.microsoft.azure.servicebus.IMessage;import java.util.List;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
+import com.microsoft.azure.servicebus.IMessage;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Stream;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +28,8 @@ import uk.gov.hmcts.reform.pbis.categories.IntegrationTests;
 @SpringBootTest
 @Category(IntegrationTests.class)
 public class ServiceBusClientTest extends AbstractServiceBusTest {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     @Before
@@ -76,6 +87,49 @@ public class ServiceBusClientTest extends AbstractServiceBusTest {
         assertThat(receiveMessage()).as("check if subscription is empty").isNull();
     }
 
+    @Test
+    public void sendToDeadLetter_should_send_message_to_dead_letter_queue() throws Exception {
+        String messageContent = "message-for-dead-letter-" + UUID.randomUUID().toString();
+
+        serviceBusFeeder.sendMessage(messageContent);
+        IMessage receivedMessage = receiveMessage();
+
+        String reason = "test dead letter reason";
+        String description = "test error description";
+        Map<String, String> validationErrors = singletonMap("test-field-name", "test error message");
+
+        sendMessageToDeadLetter(receivedMessage, reason, description, validationErrors);
+
+        IMessage message = deadLetterQueueHelper.receiveMessage();
+        assertThat(message).as("message in dead letter queue").isNotNull();
+        assertThat(new String(message.getBody())).as("message content").isEqualTo(messageContent);
+
+        Map<String, String> properties = message.getProperties();
+
+        Map<String, String> expectedProperties =
+            getExpectedProperties(reason, description, validationErrors);
+
+        assertThat(properties).as("dead letter message properties").isEqualTo(expectedProperties);
+
+        assertThat(deadLetterQueueHelper.receiveMessage())
+            .as("check dead letter queue is empty")
+            .isNull();
+    }
+
+    private Map<String, String> getExpectedProperties(
+        String reason,
+        String description,
+        Map<String, String> validationErrors
+    ) throws JsonProcessingException {
+
+        return ImmutableMap.of(
+            "DeadLetterReason", reason,
+            "DeadLetterErrorDescription", description,
+            "validationErrors", objectMapper.writeValueAsString(validationErrors)
+        );
+    }
+
+
     private void assertSameMessage(IMessage actual, IMessage expected) {
         assertThat(actual).as("check if message is not empty").isNotNull();
 
@@ -101,6 +155,16 @@ public class ServiceBusClientTest extends AbstractServiceBusTest {
 
     private void completeMessage(IMessage message) {
         serviceBusClient.completeMessage(message.getMessageId(), message.getLockToken());
+        messagesToComplete.remove(message.getMessageId());
+    }
+
+    private void sendMessageToDeadLetter(
+        IMessage message,
+        String reason,
+        String description,
+        Map<String, String> fieldValidationErrors
+    ) {
+        serviceBusClient.sendToDeadLetter(message, reason, description, fieldValidationErrors);
         messagesToComplete.remove(message.getMessageId());
     }
 }
