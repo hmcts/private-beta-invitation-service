@@ -17,8 +17,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.gov.hmcts.reform.pbis.Configuration;
 import uk.gov.hmcts.reform.pbis.EmailCreator;
-import uk.gov.hmcts.reform.pbis.EmailSendingException;
 import uk.gov.hmcts.reform.pbis.EmailService;
+import uk.gov.hmcts.reform.pbis.ServiceNotFoundException;
 import uk.gov.hmcts.reform.pbis.categories.IntegrationTests;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.notify.NotificationClientProvider;
@@ -73,14 +73,21 @@ public class EmailServiceTest {
 
     @Test
     public void sendWelcomeEmail_should_fail_when_service_is_unknown() {
+        String service = "unknown-service";
+
         PrivateBetaRegistration registrationWithUnknownService =
-            SampleData.getSampleRegistration("unknown-service");
+            SampleData.getSampleRegistration(service);
 
         assertThatThrownBy(() ->
             emailService.sendWelcomeEmail(registrationWithUnknownService)
         )
-            .isInstanceOf(EmailSendingException.class)
-            .hasMessageContaining("Failed to send email");
+            .isInstanceOf(ServiceNotFoundException.class)
+            .hasMessageContaining(
+                String.format(
+                    "Service %s not found in email template configuration",
+                    service
+                )
+            );
 
         List<Notification> sentEmails =
             notificationHelper.getSentEmails(registrationWithUnknownService.referenceId);

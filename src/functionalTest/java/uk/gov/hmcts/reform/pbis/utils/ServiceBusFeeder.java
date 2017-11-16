@@ -40,7 +40,7 @@ public class ServiceBusFeeder implements AutoCloseable {
         }
     }
 
-    public void sendMessage(
+    public IMessage sendMessage(
         PrivateBetaRegistration registration
     ) throws JsonProcessingException, ServiceBusException, InterruptedException {
 
@@ -49,11 +49,13 @@ public class ServiceBusFeeder implements AutoCloseable {
         );
 
         String messageContent = mapper.writeValueAsString(registration);
-        topicClient.send(new Message(messageContent));
+        IMessage message = sendMessage(messageContent);
 
         logger.info(
             String.format("Registration sent. Reference Id: %s", registration.referenceId)
         );
+
+        return message;
     }
 
     public IMessage sendMessage(String content) throws ServiceBusException, InterruptedException {
