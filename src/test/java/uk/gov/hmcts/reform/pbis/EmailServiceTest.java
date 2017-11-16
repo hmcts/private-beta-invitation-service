@@ -117,16 +117,29 @@ public class EmailServiceTest {
     public void sendWelcomeEmail_should_throw_exception_when_client_provider_fails()
         throws NotificationClientException {
 
-        given(
-            notificationClientProvider.getClient(anyString())
-        ).willThrow(
-            new ServiceNotFoundException("test")
-        );
+        Exception thrownException = new RuntimeException("test");
+
+        given(notificationClientProvider.getClient(anyString())).willThrow(thrownException);
 
         assertThatThrownBy(
             () -> emailService.sendWelcomeEmail(privateBetaRegistration)
         ).isInstanceOf(
             EmailSendingException.class
-        );
+        ).hasMessage(
+            "Failed to send email. Reference ID: " + privateBetaRegistration.referenceId
+        ).hasCause(thrownException);
+    }
+
+    @Test()
+    public void sendWelcomeEmail_should_rethrow_exception_when_service_not_found()
+        throws NotificationClientException {
+
+        ServiceNotFoundException exceptionThrown = new ServiceNotFoundException("test");
+
+        given(notificationClientProvider.getClient(anyString())).willThrow(exceptionThrown);
+
+        assertThatThrownBy(
+            () -> emailService.sendWelcomeEmail(privateBetaRegistration)
+        ).isSameAs(exceptionThrown);
     }
 }

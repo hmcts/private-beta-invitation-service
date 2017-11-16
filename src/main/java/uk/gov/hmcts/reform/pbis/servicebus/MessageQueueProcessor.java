@@ -4,6 +4,7 @@ import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.invalidMessageDat
 import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.invalidMessageFormat;
 import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.processingError;
 import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.success;
+import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.unknownService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.IMessage;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.pbis.EmailService;
 import uk.gov.hmcts.reform.pbis.MessageProcessingResult;
 import uk.gov.hmcts.reform.pbis.MessageProcessingResultType;
+import uk.gov.hmcts.reform.pbis.ServiceNotFoundException;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 
 
@@ -160,6 +162,8 @@ public class MessageQueueProcessor {
         try {
             emailService.sendWelcomeEmail(registration);
             return success();
+        } catch (ServiceNotFoundException e) {
+            return unknownService();
         } catch (Exception e) {
             return processingError(e);
         }

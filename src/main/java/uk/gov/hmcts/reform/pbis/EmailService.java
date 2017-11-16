@@ -43,6 +43,8 @@ public class EmailService {
             logger.info(String.format(
                 "Welcome email sent. Reference ID: %s", privateBetaRegistration.referenceId
             ));
+        } catch (ServiceNotFoundException e) {
+            throw e;
         } catch (Exception e) {
             String errorMessage = String.format(
                 "Failed to send email. Reference ID: %s",

@@ -27,7 +27,7 @@ public class MessageProcessingResult {
     public static MessageProcessingResult invalidMessageFormat() {
         return new MessageProcessingResult(
             MessageProcessingResultType.UNPROCESSABLE_MESSAGE,
-            new MessageProcessingResult.ProcessingError(
+            new ProcessingError(
                 "Invalid message",
                 "Message body has invalid format",
                 null,
@@ -41,7 +41,7 @@ public class MessageProcessingResult {
     ) {
         return new MessageProcessingResult(
             MessageProcessingResultType.UNPROCESSABLE_MESSAGE,
-            new MessageProcessingResult.ProcessingError(
+            new ProcessingError(
                 "Invalid message",
                 "Message contains invalid data",
                 getValidationErrorMap(violations),
@@ -53,7 +53,19 @@ public class MessageProcessingResult {
     public static MessageProcessingResult processingError(Exception cause) {
         return new MessageProcessingResult(
             MessageProcessingResultType.ERROR,
-            new MessageProcessingResult.ProcessingError(null, null, null, cause)
+            new ProcessingError(null, null, null, cause)
+        );
+    }
+
+    public static MessageProcessingResult unknownService() {
+        return new MessageProcessingResult(
+            MessageProcessingResultType.UNPROCESSABLE_MESSAGE,
+            new ProcessingError(
+                "Unknown service",
+                "The message references an unknown service",
+                null,
+                null
+            )
         );
     }
 

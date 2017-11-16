@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.pbis.integration;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
@@ -29,6 +30,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.gov.hmcts.reform.pbis.EmailService;
+import uk.gov.hmcts.reform.pbis.ServiceNotFoundException;
 import uk.gov.hmcts.reform.pbis.categories.IntegrationTests;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.servicebus.IServiceBusClient;
@@ -41,6 +43,10 @@ import uk.gov.hmcts.reform.pbis.utils.SampleData;
 @SpringBootTest
 @Category(IntegrationTests.class)
 public class MessageQueueProcessorTest extends AbstractServiceBusTest {
+
+    private static final String DEAD_LETTER_REASON_KEY = "DeadLetterReason";
+    private static final String DEAD_LETTER_DESCRIPTION_KEY = "DeadLetterErrorDescription";
+    private static final String VALIDATION_ERRORS_KEY = "ValidationErrors";
 
     @Mock
     private EmailService emailService;
@@ -185,6 +191,53 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
             .isNull();
     }
 
+    @Test
+    public void run_should_send_messages_with_unknown_service_to_dead_letter() throws Exception {
+        final IMessage originalMessage = serviceBusFeeder.sendMessage(
+            SampleData.getSampleRegistration("unknown-service")
+        );
+
+        willThrow(new ServiceNotFoundException("test"))
+            .given(emailService)
+            .sendWelcomeEmail(any());
+
+        messageQueueProcessor.run();
+
+        assertThat(receiveMessage()).as("check if subscription is empty").isNull();
+
+        IMessage deadLetterMessage = deadLetterQueueHelper.receiveMessage();
+
+        assertDeadLetterMessageIsForUnknownService(deadLetterMessage, originalMessage);
+
+        assertThat(deadLetterQueueHelper.receiveMessage())
+            .as("check if dead letter queue is empty")
+            .isNull();
+    }
+
+    private void assertDeadLetterMessageIsForUnknownService(
+        IMessage deadLetterMessage,
+        IMessage originalMessage
+    ) {
+        assertThat(deadLetterMessage).as("dead letter message").isNotNull();
+
+        assertThat(bodyAsString(deadLetterMessage))
+            .as("dead letter message body")
+            .isEqualTo(bodyAsString(originalMessage));
+
+        assertThat(deadLetterMessage.getMessageId())
+            .as("dead letter message ID")
+            .isEqualTo(originalMessage.getMessageId());
+
+        assertThat(deadLetterMessage.getProperties())
+            .as("dead letter message properties")
+            .isEqualTo(
+                ImmutableMap.of(
+                    DEAD_LETTER_REASON_KEY, "Unknown service",
+                    DEAD_LETTER_DESCRIPTION_KEY, "The message references an unknown service"
+                )
+            );
+    }
+
     private void assertDeadLetterMessageIsForInvalidRegistration(
         IMessage deadLetterMessage,
         PrivateBetaRegistration invalidRegistration,
@@ -198,9 +251,9 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
             .isEqualTo(objectMapper.writeValueAsString(invalidRegistration));
 
         Map<String, String> expectedProperties = ImmutableMap.of(
-            "DeadLetterReason", "Invalid message",
-            "DeadLetterErrorDescription", "Message contains invalid data",
-            "ValidationErrors",  validationErrorsString
+            DEAD_LETTER_REASON_KEY, "Invalid message",
+            DEAD_LETTER_DESCRIPTION_KEY, "Message contains invalid data",
+            VALIDATION_ERRORS_KEY,  validationErrorsString
         );
 
         assertThat(deadLetterMessage.getProperties())
@@ -220,8 +273,8 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
             .isEqualTo(originalMessage.getMessageId());
 
         Map<String, String> expectedProperties = ImmutableMap.of(
-            "DeadLetterReason", "Invalid message",
-            "DeadLetterErrorDescription", "Message body has invalid format"
+            DEAD_LETTER_REASON_KEY, "Invalid message",
+            DEAD_LETTER_DESCRIPTION_KEY, "Message body has invalid format"
         );
 
         assertThat(deadLetterMessage.getProperties())
