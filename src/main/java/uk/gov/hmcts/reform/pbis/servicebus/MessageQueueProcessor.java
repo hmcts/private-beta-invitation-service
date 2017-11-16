@@ -76,7 +76,7 @@ public class MessageQueueProcessor {
             updateMessageInSubscription(message, processingResult, serviceBusClient);
             logProcessingResult(processingResult, message);
 
-            if (processingResult.resultType == MessageProcessingResultType.SUCCESS) {
+            if (processingResult.resultType != MessageProcessingResultType.SUCCESS) {
                 failureCount++;
             }
         }
