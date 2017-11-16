@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.pbis.servicebus;
 
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.IMessage;
 import com.microsoft.azure.servicebus.Message;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -33,6 +35,14 @@ import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 public class MessageQueueProcessorTest {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    private static final String INVALID_MESSAGE_REASON = "Invalid message";
+
+    private static final String INVALID_MESSAGE_DATA_DESCRIPTION =
+        "Message contains invalid data";
+
+    private static final String INVALID_MESSAGE_FORMAT_DESCRIPTION =
+        "Message body has invalid format";
 
     @Mock
     private IServiceBusClient client;
@@ -205,14 +215,54 @@ public class MessageQueueProcessorTest {
     }
 
     @Test
-    public void run_should_continue_processing_when_message_invalid() {
-        IMessage message = new Message("invalid content");
-        given(client.receiveMessage()).willReturn(message, message, null);
+    public void run_should_continue_processing_when_message_invalid() throws Exception {
+        IMessage malformedMessage = new Message("invalid content");
+        IMessage wellFormedInvalidMessage = createMessage(getInvalidRegistration());
+
+        given(client.receiveMessage()).willReturn(
+            malformedMessage,
+            wellFormedInvalidMessage,
+            null
+        );
 
         messageQueueProcessor.run();
 
         verify(client, times(3)).receiveMessage();
         verify(emailService, never()).sendWelcomeEmail(any());
+    }
+
+    @Test
+    public void run_should_send_malformed_messages_to_dead_letter_queue() throws Exception {
+        IMessage message1 = new Message("invalid content 1");
+        IMessage message2 = new Message("invalid content 2");
+        given(client.receiveMessage()).willReturn(message1, message2, null);
+
+        messageQueueProcessor.run();
+
+        verify(client, times(3)).receiveMessage();
+        verifyMalformedMessageSentToDeadLetter(message1);
+        verifyMalformedMessageSentToDeadLetter(message2);
+        verify(client).close();
+        verifyNoMoreInteractions(client);
+    }
+
+    @Test
+    public void run_should_send_invalid_messages_to_dead_letter_queue() throws Exception {
+        PrivateBetaRegistration invalidRegistration = getInvalidRegistration();
+
+        IMessage message1 = createMessage(invalidRegistration);
+        IMessage message2 = createMessage(invalidRegistration);
+        given(client.receiveMessage()).willReturn(message1, message2, null);
+
+        messageQueueProcessor.run();
+
+        Map<String, String> expectedValidationErrors = getValidationErrors(invalidRegistration);
+
+        verify(client, times(3)).receiveMessage();
+        verifyInvalidMessageSentToDeadLetter(message1, expectedValidationErrors);
+        verifyInvalidMessageSentToDeadLetter(message2, expectedValidationErrors);
+        verify(client).close();
+        verifyNoMoreInteractions(client);
     }
 
     @Test
@@ -268,6 +318,41 @@ public class MessageQueueProcessorTest {
             "not an email",
             "",
             ""
+        );
+    }
+
+    private Map<String, String> getValidationErrors(PrivateBetaRegistration invalidRegistration) {
+        return Validation
+            .buildDefaultValidatorFactory()
+            .getValidator()
+            .validate(invalidRegistration)
+            .stream()
+            .collect(
+                toMap(
+                    violation -> violation.getPropertyPath().toString(),
+                    violation -> violation.getMessage()
+                )
+            );
+    }
+
+    private void verifyMalformedMessageSentToDeadLetter(IMessage message) {
+        verify(client).sendToDeadLetter(
+            message,
+            INVALID_MESSAGE_REASON,
+            INVALID_MESSAGE_FORMAT_DESCRIPTION,
+            null
+        );
+    }
+
+    private void verifyInvalidMessageSentToDeadLetter(
+        IMessage message,
+        Map<String, String> validationErrors
+    ) {
+        verify(client).sendToDeadLetter(
+            message,
+            INVALID_MESSAGE_REASON,
+            INVALID_MESSAGE_DATA_DESCRIPTION,
+            validationErrors
         );
     }
 }

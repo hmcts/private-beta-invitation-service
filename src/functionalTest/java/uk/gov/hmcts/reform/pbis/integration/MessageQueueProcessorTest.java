@@ -10,10 +10,14 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.collect.ImmutableMap;
 import com.microsoft.azure.servicebus.IMessage;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
+import javax.validation.Validation;
 import javax.validation.Validator;
 import org.junit.After;
 import org.junit.Before;
@@ -41,7 +45,6 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
     @Mock
     private EmailService emailService;
 
-    @Mock
     private Validator validator;
 
     private MessageQueueProcessor messageQueueProcessor;
@@ -53,6 +56,8 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
 
         // using the spy here in order to keep track of received messages
         IServiceBusClientFactory clientFactorySpy = prepareServiceBusClientFactorySpy();
+
+        validator = Validation.buildDefaultValidatorFactory().getValidator();
 
         messageQueueProcessor = new MessageQueueProcessor(
             clientFactorySpy,
@@ -139,12 +144,89 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
         // wait for message lock to expire
         Thread.sleep(testConfig.getMessageLockTimeoutInMs());
 
-        IMessage remainingMessage = receiveMessage();
-        assertThat(remainingMessage).as("check if non-null message was received").isNotNull();
-        assertThat(new String(remainingMessage.getBody())).isEqualTo(invalidMessageContent);
-
         // make sure that the valid message is not in the queue
         assertThat(receiveMessage()).as("check if subscription is empty").isNull();
+    }
+
+    @Test
+    public void run_should_send_malformed_messages_to_dead_letter() throws Exception {
+        IMessage originalMessage = serviceBusFeeder.sendMessage("Invalid content");
+
+        messageQueueProcessor.run();
+
+        assertThat(receiveMessage()).as("check if subscription is empty").isNull();
+
+        IMessage deadLetterMessage = deadLetterQueueHelper.receiveMessage();
+        assertDeadLetterMessageWithMalformedContent(deadLetterMessage, originalMessage);
+
+        assertThat(deadLetterQueueHelper.receiveMessage())
+            .as("check if dead letter queue is empty")
+            .isNull();
+    }
+
+    @Test
+    public void run_should_send_well_formed_invalid_messages_to_dead_letter() throws Exception {
+        PrivateBetaRegistration invalidRegistration = getRegistrationWithInvalidEmail();
+        serviceBusFeeder.sendMessage(invalidRegistration);
+
+        messageQueueProcessor.run();
+
+        assertThat(receiveMessage()).as("check if subscription is empty").isNull();
+
+        IMessage deadLetterMessage = deadLetterQueueHelper.receiveMessage();
+
+        assertDeadLetterMessageIsForInvalidRegistration(
+            deadLetterMessage,
+            invalidRegistration,
+            "{\"emailAddress\":\"not a well-formed email address\"}");
+
+        assertThat(deadLetterQueueHelper.receiveMessage())
+            .as("check if dead letter queue is empty")
+            .isNull();
+    }
+
+    private void assertDeadLetterMessageIsForInvalidRegistration(
+        IMessage deadLetterMessage,
+        PrivateBetaRegistration invalidRegistration,
+        String validationErrorsString
+    ) throws JsonProcessingException {
+
+        assertThat(deadLetterMessage).as("check if dead letter message is present").isNotNull();
+
+        assertThat(bodyAsString(deadLetterMessage))
+            .as("dead letter message body")
+            .isEqualTo(objectMapper.writeValueAsString(invalidRegistration));
+
+        Map<String, String> expectedProperties = ImmutableMap.of(
+            "DeadLetterReason", "Invalid message",
+            "DeadLetterErrorDescription", "Message contains invalid data",
+            "ValidationErrors",  validationErrorsString
+        );
+
+        assertThat(deadLetterMessage.getProperties())
+            .as("dead letter message properties")
+            .isEqualTo(expectedProperties);
+    }
+
+    private void assertDeadLetterMessageWithMalformedContent(
+        IMessage deadLetterMessage,
+        IMessage originalMessage
+    ) {
+        assertThat(deadLetterMessage).as("check if dead letter message is present").isNotNull();
+        assertThat(bodyAsString(deadLetterMessage)).isEqualTo(bodyAsString(originalMessage));
+
+        assertThat(deadLetterMessage.getMessageId())
+            .as("dead letter message ID")
+            .isEqualTo(originalMessage.getMessageId());
+
+        Map<String, String> expectedProperties = ImmutableMap.of(
+            "DeadLetterReason", "Invalid message",
+            "DeadLetterErrorDescription", "Message body has invalid format"
+        );
+
+        assertThat(deadLetterMessage.getProperties())
+            .as("dead letter message properties")
+            .isEqualTo(expectedProperties);
     }
 
     private String[] getRegistrationIds(List<PrivateBetaRegistration> registrations) {
@@ -200,5 +282,15 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
         doNothing().when(clientSpy).close();
 
         return clientSpy;
+    }
+
+    private PrivateBetaRegistration getRegistrationWithInvalidEmail() {
+        return new PrivateBetaRegistration(
+            "valid reference id",
+            testConfig.getServiceName(),
+            "not-a-valid-email",
+            "John",
+            "Smith"
+        );
     }
 }

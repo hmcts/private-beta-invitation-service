@@ -50,7 +50,7 @@ public class DeadLetterQueueHelper implements AutoCloseable {
         int deletedMessagesCount = 0;
 
         IMessage message;
-        while ((message = messageReceiver.receive(maxReceiveWaitTime)) != null) {
+        while ((message = receiveMessage()) != null) {
             messageReceiver.complete(message.getLockToken());
             deletedMessagesCount++;
         }

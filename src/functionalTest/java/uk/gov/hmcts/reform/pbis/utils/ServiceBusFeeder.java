@@ -2,11 +2,13 @@ package uk.gov.hmcts.reform.pbis.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.azure.servicebus.IMessage;
 import com.microsoft.azure.servicebus.ITopicClient;
 import com.microsoft.azure.servicebus.Message;
 import com.microsoft.azure.servicebus.TopicClient;
 import com.microsoft.azure.servicebus.primitives.ConnectionStringBuilder;
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
@@ -54,10 +56,13 @@ public class ServiceBusFeeder implements AutoCloseable {
         );
     }
 
-    public void sendMessage(String content) throws ServiceBusException, InterruptedException {
+    public IMessage sendMessage(String content) throws ServiceBusException, InterruptedException {
         logger.info(String.format("Sending message with content: %s", content));
-        topicClient.send(new Message(content));
+        String messageId = "test-message-" + UUID.randomUUID().toString();
+        IMessage message = new Message(messageId, content, null);
+        topicClient.send(message);
         logger.info(String.format("Sent message with content: %s", content));
+        return message;
     }
 
     @Override
