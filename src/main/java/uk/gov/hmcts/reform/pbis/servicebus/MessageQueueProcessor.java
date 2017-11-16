@@ -4,7 +4,6 @@ import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.invalidMessageDat
 import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.invalidMessageFormat;
 import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.processingError;
 import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.success;
-import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.SUCCESS;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.IMessage;
@@ -21,6 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.pbis.EmailService;
 import uk.gov.hmcts.reform.pbis.MessageProcessingResult;
+import uk.gov.hmcts.reform.pbis.MessageProcessingResultType;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 
 
@@ -73,19 +73,35 @@ public class MessageQueueProcessor {
             messageCount++;
 
             MessageProcessingResult processingResult = processMessage(message);
+            updateMessageInSubscription(message, processingResult, serviceBusClient);
+            logProcessingResult(processingResult, message);
 
-            if (processingResult.resultType == SUCCESS) {
-                completeMessage(message, serviceBusClient);
-            } else {
+            if (processingResult.resultType == MessageProcessingResultType.SUCCESS) {
                 failureCount++;
             }
-
-            logProcessingResult(processingResult, message);
         }
 
         logger.info(String.format(
             "No more messages to process. Total: %s, failed: %s.", messageCount, failureCount)
         );
+    }
+
+    private void updateMessageInSubscription(
+        IMessage message,
+        MessageProcessingResult processingResult,
+        IServiceBusClient serviceBusClient
+    ) {
+        switch (processingResult.resultType) {
+            case SUCCESS:
+                completeMessage(message, serviceBusClient);
+                break;
+            case UNPROCESSABLE_MESSAGE:
+                sendToDeadLetter(message, serviceBusClient, processingResult.errorDetails);
+                break;
+            default:
+                // let the message lock expire before it's available again
+                break;
+        }
     }
 
     private MessageProcessingResult processMessage(IMessage message) {
@@ -125,6 +141,19 @@ public class MessageQueueProcessor {
 
     private void completeMessage(IMessage message, IServiceBusClient serviceBusClient) {
         serviceBusClient.completeMessage(message.getMessageId(), message.getLockToken());
+    }
+
+    private void sendToDeadLetter(
+        IMessage message,
+        IServiceBusClient serviceBusClient,
+        MessageProcessingResult.ProcessingError error
+    ) {
+        serviceBusClient.sendToDeadLetter(
+            message,
+            error.reason,
+            error.description,
+            error.fieldValidationErrors
+        );
     }
 
     private MessageProcessingResult sendEmail(PrivateBetaRegistration registration) {

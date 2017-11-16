@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.microsoft.azure.servicebus.IMessage;
 
@@ -29,7 +28,6 @@ import uk.gov.hmcts.reform.pbis.categories.IntegrationTests;
 @Category(IntegrationTests.class)
 public class ServiceBusClientTest extends AbstractServiceBusTest {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     @Before
@@ -137,7 +135,7 @@ public class ServiceBusClientTest extends AbstractServiceBusTest {
 
         assertThat(message).as("message in dead letter queue").isNotNull();
 
-        assertThat(new String(message.getBody()))
+        assertThat(bodyAsString(message))
             .as("dead letter message content")
             .isEqualTo(expectedContent);
 
@@ -168,10 +166,6 @@ public class ServiceBusClientTest extends AbstractServiceBusTest {
             .stream()
             .map(message -> bodyAsString(message))
             .collect(toList());
-    }
-
-    private String bodyAsString(IMessage message) {
-        return new String(message.getBody());
     }
 
     private void completeMessage(IMessage message) {

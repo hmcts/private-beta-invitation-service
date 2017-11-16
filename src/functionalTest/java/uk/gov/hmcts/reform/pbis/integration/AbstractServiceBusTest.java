@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.pbis.integration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.IMessage;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ import uk.gov.hmcts.reform.pbis.utils.ServiceBusFeeder;
 public abstract class AbstractServiceBusTest {
 
     protected static final Configuration testConfig = new Configuration();
+    protected static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(AbstractServiceBusTest.class);
 
     @Autowired
@@ -112,5 +114,9 @@ public abstract class AbstractServiceBusTest {
             testConfig.getServiceBusSubscriptionName(),
             testConfig.getMaxReceiveWaitTime()
         );
+    }
+
+    protected String bodyAsString(IMessage message) {
+        return new String(message.getBody());
     }
 }
