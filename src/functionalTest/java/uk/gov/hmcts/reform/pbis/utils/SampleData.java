@@ -31,4 +31,9 @@ public class SampleData {
             "Smith"
         );
     }
+
+    public static PrivateBetaRegistration getSampleInvalidRegistration() {
+        String reference = "pbis-test-" + UUID.randomUUID().toString();
+        return new PrivateBetaRegistration(reference, "", "not-an-email", "", "");
+    }
 }

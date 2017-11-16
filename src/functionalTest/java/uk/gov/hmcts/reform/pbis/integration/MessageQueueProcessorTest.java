@@ -157,7 +157,7 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
         assertThat(receiveMessage()).as("check if subscription is empty").isNull();
 
         IMessage deadLetterMessage = deadLetterQueueHelper.receiveMessage();
-        assertDeadLetterMessageWithMalformedContent(deadLetterMessage, originalMessage);
+        assertDeadLetterMessageIsForMalformedContent(deadLetterMessage, originalMessage);
 
         assertThat(deadLetterQueueHelper.receiveMessage())
             .as("check if dead letter queue is empty")
@@ -208,7 +208,7 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
             .isEqualTo(expectedProperties);
     }
 
-    private void assertDeadLetterMessageWithMalformedContent(
+    private void assertDeadLetterMessageIsForMalformedContent(
         IMessage deadLetterMessage,
         IMessage originalMessage
     ) {

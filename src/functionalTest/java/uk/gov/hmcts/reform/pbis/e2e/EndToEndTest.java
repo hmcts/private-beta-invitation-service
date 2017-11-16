@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.pbis.e2e;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleInvalidRegistration;
 import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleRegistration;
 
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
@@ -93,17 +94,30 @@ public class EndToEndTest {
     }
 
     @Test
+    public void should_not_send_email_when_message_is_invalid() throws Exception {
+        serviceBusFeeder.sendMessage("invalid format");
+
+        PrivateBetaRegistration invalidRegistration = getSampleInvalidRegistration();
+        serviceBusFeeder.sendMessage(invalidRegistration);
+
+        waitForProcessing();
+
+        List<Notification> sentEmails =
+            notificationHelper.getSentEmails(invalidRegistration.referenceId);
+
+        assertThat(sentEmails).isEmpty();
+
+        assertTwoMessagesInDeadLetterQueue();
+    }
+
+    @Test
     public void should_not_send_email_when_message_references_unknown_service() throws Exception {
         PrivateBetaRegistration registrationWithUnknownService =
             getSampleRegistration("unknown-service-123");
 
         serviceBusFeeder.sendMessage(registrationWithUnknownService);
 
-        // sending a valid message to make sure the service has finished processing
-        PrivateBetaRegistration registrationWithKnownService =
-            getSampleRegistration(config.getServiceName());
-        serviceBusFeeder.sendMessage(registrationWithKnownService);
-        waitUntilRegistrationIsProcessed(registrationWithKnownService.referenceId);
+        waitForProcessing();
 
         List<Notification> sentEmails =
             notificationHelper.getSentEmails(registrationWithUnknownService.referenceId);
@@ -124,8 +138,7 @@ public class EndToEndTest {
             serviceBusFeeder.sendMessage(registration);
         }
 
-        // wait for the last sent message to be processed
-        waitUntilRegistrationIsProcessed(registrations.get(numberOfMessages - 1).referenceId);
+        waitForProcessing();
 
         List<String> referenceIds = registrations.stream()
             .map(r -> r.referenceId)
@@ -134,6 +147,29 @@ public class EndToEndTest {
         assertThat(referenceIds).allMatch(
             referenceId -> notificationHelper.getSentEmails(referenceId).size() == 1
         );
+    }
+
+    private void assertTwoMessagesInDeadLetterQueue() throws Exception {
+        assertThat(deadLetterQueueHelper.receiveMessage())
+            .as("first message in dead letter queue")
+            .isNotNull();
+
+        assertThat(deadLetterQueueHelper.receiveMessage())
+            .as("second message in dead letter queue")
+            .isNotNull();
+
+        assertThat(deadLetterQueueHelper.receiveMessage())
+            .as("check if dead letter queue is empty")
+            .isNull();
+    }
+
+    private void waitForProcessing() throws Exception {
+        // Sending a valid message. When the email is sent, we know that the service
+        // has processed the subscription.
+        PrivateBetaRegistration registrationWithKnownService =
+            getSampleRegistration(config.getServiceName());
+        serviceBusFeeder.sendMessage(registrationWithKnownService);
+        waitUntilRegistrationIsProcessed(registrationWithKnownService.referenceId);
     }
 
     private void waitUntilRegistrationIsProcessed(String referenceId) {
