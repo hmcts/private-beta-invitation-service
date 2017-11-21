@@ -6,6 +6,7 @@ plugins {
   id 'org.springframework.boot' version '1.5.6.RELEASE'
   id 'org.owasp.dependencycheck' version '1.4.5.1'
   id 'com.github.ben-manes.versions' version '0.15.0'
+  id 'org.sonarqube' version '2.6.1'
   id 'pmd'
 }
 
@@ -117,6 +118,17 @@ task integrationTest(type: Test) {
 
   useJUnit {
     includeCategories 'uk.gov.hmcts.reform.pbis.categories.IntegrationTests'
+  }
+}
+
+project.tasks['sonarqube'].dependsOn test
+sonarqube {
+  properties {
+    property "sonar.projectName", "Reform :: Private Beta Invitation Service"
+    property "sonar.jacoco.reportPaths", [
+      "${project.buildDir}/jacoco/test.exec",
+      "${project.buildDir}/jacoco/functionalTest.exec"
+    ]
   }
 }
 
