@@ -13,7 +13,6 @@ import static org.mockito.Mockito.verify;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableMap;
-import com.microsoft.applicationinsights.TelemetryClient;
 import com.microsoft.azure.servicebus.IMessage;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,7 @@ import uk.gov.hmcts.reform.pbis.categories.IntegrationTests;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.servicebus.IServiceBusClient;
 import uk.gov.hmcts.reform.pbis.servicebus.IServiceBusClientFactory;
+import uk.gov.hmcts.reform.pbis.servicebus.MessageQueueProcessingTracker;
 import uk.gov.hmcts.reform.pbis.servicebus.MessageQueueProcessor;
 import uk.gov.hmcts.reform.pbis.utils.SampleData;
 
@@ -53,7 +53,7 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
     private EmailService emailService;
 
     @Mock
-    private TelemetryClient telemetryClient;
+    private MessageQueueProcessingTracker tracker;
 
     private Validator validator;
 
@@ -73,7 +73,7 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
             clientFactorySpy,
             emailService,
             validator,
-            telemetryClient
+            tracker
         );
     }
 
