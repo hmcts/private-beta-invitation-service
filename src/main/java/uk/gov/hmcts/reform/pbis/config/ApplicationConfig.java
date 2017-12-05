@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.pbis.config;
 
+import com.microsoft.applicationinsights.TelemetryClient;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,5 +69,10 @@ public class ApplicationConfig {
     public Validator getValidator() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         return factory.getValidator();
+    }
+
+    @Bean
+    public TelemetryClient getTelemetryClient() {
+        return new TelemetryClient();
     }
 }

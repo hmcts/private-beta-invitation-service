@@ -5,8 +5,16 @@ import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.invalidMessageFor
 import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.processingError;
 import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.success;
 import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.unknownService;
+import static uk.gov.hmcts.reform.pbis.telemetry.EventNames.EMAIL_SENT;
+import static uk.gov.hmcts.reform.pbis.telemetry.EventNames.MESSAGE_PROCESSING_ERROR;
+import static uk.gov.hmcts.reform.pbis.telemetry.EventNames.MESSAGE_PROCESSING_RUN_COMPLETED;
+import static uk.gov.hmcts.reform.pbis.telemetry.EventNames.MESSAGE_PROCESSING_RUN_STARTED;
+import static uk.gov.hmcts.reform.pbis.telemetry.EventNames.MESSAGE_REJECTED;
+import static uk.gov.hmcts.reform.pbis.telemetry.MetricNames.FAILING_MESSAGES_PER_FUN;
+import static uk.gov.hmcts.reform.pbis.telemetry.MetricNames.TOTAL_MESSAGES_PER_RUN;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.applicationinsights.TelemetryClient;
 import com.microsoft.azure.servicebus.IMessage;
 import java.io.IOException;
 import java.util.Optional;
@@ -41,22 +49,25 @@ public class MessageQueueProcessor {
     private final EmailService emailService;
     private final Validator validator;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final TelemetryClient telemetryClient;
 
     @Autowired
     public MessageQueueProcessor(
         IServiceBusClientFactory clientFactory,
         EmailService emailService,
-        Validator validator
-
+        Validator validator,
+        TelemetryClient telemetryClient
     ) {
         this.clientFactory = clientFactory;
         this.emailService = emailService;
         this.validator = validator;
+        this.telemetryClient = telemetryClient;
     }
 
     @Scheduled(fixedDelayString = "${serviceBus.pollingDelayInMs}")
     public void run() {
         logger.info("Processing messages from subscription queue.");
+        telemetryClient.trackEvent(MESSAGE_PROCESSING_RUN_STARTED);
 
         try (IServiceBusClient serviceBusClient = clientFactory.createClient()) {
             processMessages(serviceBusClient);
@@ -77,11 +88,14 @@ public class MessageQueueProcessor {
             MessageProcessingResult processingResult = processMessage(message);
             updateMessageInSubscription(message, processingResult, serviceBusClient);
             logProcessingResult(processingResult, message);
+            sendTelemetryDataForMessage(processingResult);
 
             if (processingResult.resultType != MessageProcessingResultType.SUCCESS) {
                 failureCount++;
             }
         }
+
+        sendTelemetryDataForCompletedRun(messageCount, failureCount);
 
         logger.info(String.format(
             "No more messages to process. Total: %s, failed: %s.", messageCount, failureCount)
@@ -139,6 +153,28 @@ public class MessageQueueProcessor {
                 break;
             default:
         }
+    }
+
+    private void sendTelemetryDataForMessage(MessageProcessingResult processingResult) {
+        switch (processingResult.resultType) {
+            case SUCCESS:
+                telemetryClient.trackEvent(EMAIL_SENT);
+                break;
+            case ERROR:
+                telemetryClient.trackEvent(MESSAGE_PROCESSING_ERROR);
+                break;
+            case UNPROCESSABLE_MESSAGE:
+                telemetryClient.trackEvent(MESSAGE_REJECTED);
+                break;
+            default:
+                logger.warn("Unknown processing result type: {}", processingResult.resultType);
+        }
+    }
+
+    private void sendTelemetryDataForCompletedRun(int messageCount, int failureCount) {
+        telemetryClient.trackEvent(MESSAGE_PROCESSING_RUN_COMPLETED);
+        telemetryClient.trackMetric(TOTAL_MESSAGES_PER_RUN, messageCount);
+        telemetryClient.trackMetric(FAILING_MESSAGES_PER_FUN, failureCount);
     }
 
     private void completeMessage(IMessage message, IServiceBusClient serviceBusClient) {

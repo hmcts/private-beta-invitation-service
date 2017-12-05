@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableMap;
+import com.microsoft.applicationinsights.TelemetryClient;
 import com.microsoft.azure.servicebus.IMessage;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,9 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
     @Mock
     private EmailService emailService;
 
+    @Mock
+    private TelemetryClient telemetryClient;
+
     private Validator validator;
 
     private MessageQueueProcessor messageQueueProcessor;
@@ -68,7 +72,8 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
         messageQueueProcessor = new MessageQueueProcessor(
             clientFactorySpy,
             emailService,
-            validator
+            validator,
+            telemetryClient
         );
     }
 
