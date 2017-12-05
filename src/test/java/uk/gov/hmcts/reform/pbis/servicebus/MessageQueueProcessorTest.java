@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.pbis.servicebus;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -10,10 +11,12 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.ERROR;
+import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.SUCCESS;
+import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.UNPROCESSABLE_MESSAGE;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microsoft.applicationinsights.TelemetryClient;
 import com.microsoft.azure.servicebus.IMessage;
 import com.microsoft.azure.servicebus.Message;
 import java.util.List;
@@ -21,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 import javax.validation.Validation;
 import javax.validation.Validator;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +33,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.hmcts.reform.pbis.EmailSendingException;
 import uk.gov.hmcts.reform.pbis.EmailService;
+import uk.gov.hmcts.reform.pbis.MessageProcessingResult;
+import uk.gov.hmcts.reform.pbis.MessageProcessingResultType;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 
 
@@ -58,7 +64,7 @@ public class MessageQueueProcessorTest {
     private Validator validator;
 
     @Mock
-    private TelemetryClient telemetryClient;
+    private MessageQueueProcessingTracker tracker;
 
     private MessageQueueProcessor messageQueueProcessor;
 
@@ -81,7 +87,7 @@ public class MessageQueueProcessorTest {
             clientFactory,
             emailService,
             validator,
-            telemetryClient
+            tracker
         );
     }
 
@@ -105,7 +111,7 @@ public class MessageQueueProcessorTest {
         assertThat(registrations).hasSize(2);
         assertThat(registrations.get(0)).isEqualToComparingFieldByFieldRecursively(registration1);
         assertThat(registrations.get(1)).isEqualToComparingFieldByFieldRecursively(registration2);
-        assertTelemetryDataSent(2, 0, 0);
+        verifyTrackerCallsForRun(SUCCESS, SUCCESS);
     }
 
     @Test
@@ -160,7 +166,7 @@ public class MessageQueueProcessorTest {
 
         verifyNoMoreInteractions(emailService);
 
-        assertTelemetryDataSent(1, 0, 2);
+        verifyTrackerCallsForRun(UNPROCESSABLE_MESSAGE, SUCCESS, UNPROCESSABLE_MESSAGE);
     }
 
     @Test
@@ -225,7 +231,7 @@ public class MessageQueueProcessorTest {
         verify(client, times(3)).receiveMessage();
         verify(emailService, times(2)).sendWelcomeEmail(any());
 
-        assertTelemetryDataSent(0, 2, 0);
+        verifyTrackerCallsForRun(ERROR, ERROR);
     }
 
     @Test
@@ -243,7 +249,7 @@ public class MessageQueueProcessorTest {
 
         verify(client, times(3)).receiveMessage();
         verify(emailService, never()).sendWelcomeEmail(any());
-        assertTelemetryDataSent(0, 0, 2);
+        verifyTrackerCallsForRun(UNPROCESSABLE_MESSAGE, UNPROCESSABLE_MESSAGE);
     }
 
     @Test
@@ -350,23 +356,27 @@ public class MessageQueueProcessorTest {
             );
     }
 
-    private void assertTelemetryDataSent(int successCount, int errorCount, int rejectedCount) {
-        verify(telemetryClient).trackEvent("MessageProcessingRunStarted");
-        verify(telemetryClient).trackEvent("MessageProcessingRunCompleted");
+    private void verifyTrackerCallsForRun(
+        MessageProcessingResultType... expectedProcessingResults
+    ) {
+        verify(tracker).trackProcessingStarted();
 
-        verify(telemetryClient, times(successCount)).trackEvent("EmailSent");
-        verify(telemetryClient, times(errorCount)).trackEvent("MessageProcessingError");
-        verify(telemetryClient, times(rejectedCount)).trackEvent("MessageRejected");
+        ArgumentCaptor<MessageProcessingResult> resultCaptor =
+            ArgumentCaptor.forClass(MessageProcessingResult.class);
 
-        verify(telemetryClient).trackMetric(
-            "TotalMessagesPerRun",
-            successCount + errorCount + rejectedCount
-        );
+        verify(tracker, times(expectedProcessingResults.length))
+            .trackMessageProcessingResult(resultCaptor.capture(), any());
 
-        verify(telemetryClient).trackMetric(
-            "FailingMessagesPerRun",
-            errorCount + rejectedCount
-        );
+        List<MessageProcessingResultType> actualResults =
+            resultCaptor
+                .getAllValues()
+                .stream()
+                .map(r -> r.resultType)
+                .collect(toList());
+
+        assertThat(actualResults).containsExactly(expectedProcessingResults);
+
+        verify(tracker).trackProcessingCompleted();
     }
 
     private void verifyMalformedMessageSentToDeadLetter(IMessage message) {
