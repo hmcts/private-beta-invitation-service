@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.applicationinsights.TelemetryClient;
 import com.microsoft.azure.servicebus.IMessage;
 import com.microsoft.azure.servicebus.Message;
 import java.util.List;
@@ -56,6 +57,9 @@ public class MessageQueueProcessorTest {
     @Mock
     private Validator validator;
 
+    @Mock
+    private TelemetryClient telemetryClient;
+
     private MessageQueueProcessor messageQueueProcessor;
 
     @Before
@@ -73,7 +77,12 @@ public class MessageQueueProcessorTest {
                 .validate(registration);
         });
 
-        messageQueueProcessor = new MessageQueueProcessor(clientFactory, emailService, validator);
+        messageQueueProcessor = new MessageQueueProcessor(
+            clientFactory,
+            emailService,
+            validator,
+            telemetryClient
+        );
     }
 
     @Test
@@ -96,6 +105,7 @@ public class MessageQueueProcessorTest {
         assertThat(registrations).hasSize(2);
         assertThat(registrations.get(0)).isEqualToComparingFieldByFieldRecursively(registration1);
         assertThat(registrations.get(1)).isEqualToComparingFieldByFieldRecursively(registration2);
+        assertTelemetryDataSent(2, 0, 0);
     }
 
     @Test
@@ -149,6 +159,8 @@ public class MessageQueueProcessorTest {
             .isEqualToComparingFieldByFieldRecursively(validRegistration);
 
         verifyNoMoreInteractions(emailService);
+
+        assertTelemetryDataSent(1, 0, 2);
     }
 
     @Test
@@ -212,6 +224,8 @@ public class MessageQueueProcessorTest {
 
         verify(client, times(3)).receiveMessage();
         verify(emailService, times(2)).sendWelcomeEmail(any());
+
+        assertTelemetryDataSent(0, 2, 0);
     }
 
     @Test
@@ -229,6 +243,7 @@ public class MessageQueueProcessorTest {
 
         verify(client, times(3)).receiveMessage();
         verify(emailService, never()).sendWelcomeEmail(any());
+        assertTelemetryDataSent(0, 0, 2);
     }
 
     @Test
@@ -333,6 +348,25 @@ public class MessageQueueProcessorTest {
                     violation -> violation.getMessage()
                 )
             );
+    }
+
+    private void assertTelemetryDataSent(int successCount, int errorCount, int rejectedCount) {
+        verify(telemetryClient).trackEvent("MessageProcessingRunStarted");
+        verify(telemetryClient).trackEvent("MessageProcessingRunCompleted");
+
+        verify(telemetryClient, times(successCount)).trackEvent("EmailSent");
+        verify(telemetryClient, times(errorCount)).trackEvent("MessageProcessingError");
+        verify(telemetryClient, times(rejectedCount)).trackEvent("MessageRejected");
+
+        verify(telemetryClient).trackMetric(
+            "TotalMessagesPerRun",
+            successCount + errorCount + rejectedCount
+        );
+
+        verify(telemetryClient).trackMetric(
+            "FailingMessagesPerRun",
+            errorCount + rejectedCount
+        );
     }
 
     private void verifyMalformedMessageSentToDeadLetter(IMessage message) {
