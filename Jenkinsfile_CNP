@@ -1,13 +1,4 @@
 #!groovy
-properties(
-  [
-    [
-      $class: 'GithubProjectProperty',
-      projectUrlStr: 'https://github.com/hmcts/private-beta-invitation-service'
-    ],
-    pipelineTriggers([[$class: 'GitHubPushTrigger']])
-  ]
-)
 
 @Library("Infrastructure")
 
