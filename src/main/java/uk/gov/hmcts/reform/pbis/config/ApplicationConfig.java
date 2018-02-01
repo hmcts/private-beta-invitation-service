@@ -1,12 +1,6 @@
 package uk.gov.hmcts.reform.pbis.config;
 
 import com.microsoft.applicationinsights.TelemetryClient;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -20,6 +14,12 @@ import uk.gov.hmcts.reform.pbis.servicebus.MessageQueueProcessingTracker;
 import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusClientFactory;
 import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusClientStub;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 @Configuration
 @ConfigurationProperties

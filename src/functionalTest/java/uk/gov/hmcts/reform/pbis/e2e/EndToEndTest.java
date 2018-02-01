@@ -1,16 +1,6 @@
 package uk.gov.hmcts.reform.pbis.e2e;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
-import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleInvalidRegistration;
-import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleRegistration;
-
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.assertj.core.api.SoftAssertions;
 import org.awaitility.Duration;
 import org.junit.After;
@@ -25,6 +15,16 @@ import uk.gov.hmcts.reform.pbis.utils.NotificationHelper;
 import uk.gov.hmcts.reform.pbis.utils.ServiceBusFeeder;
 import uk.gov.service.notify.Notification;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleInvalidRegistration;
+import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleRegistration;
 
 @Category(EndToEndTests.class)
 public class EndToEndTest {

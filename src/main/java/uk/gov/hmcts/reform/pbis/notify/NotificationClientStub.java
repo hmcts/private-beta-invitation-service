@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.pbis.notify;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.service.notify.Notification;
@@ -15,6 +13,7 @@ import uk.gov.service.notify.Template;
 import uk.gov.service.notify.TemplateList;
 import uk.gov.service.notify.TemplatePreview;
 
+import java.util.Map;
 
 public class NotificationClientStub implements NotificationClientApi {
 

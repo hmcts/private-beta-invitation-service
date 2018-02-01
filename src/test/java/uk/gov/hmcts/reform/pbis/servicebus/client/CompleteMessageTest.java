@@ -1,15 +1,15 @@
 package uk.gov.hmcts.reform.pbis.servicebus.client;
 
+import org.junit.Test;
+import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusException;
+
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-
-import java.util.UUID;
-import org.junit.Test;
-import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusException;
-
 
 public class CompleteMessageTest extends AbstractServiceBusClientTest {
 

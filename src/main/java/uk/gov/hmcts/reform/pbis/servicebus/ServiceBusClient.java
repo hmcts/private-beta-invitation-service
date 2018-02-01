@@ -1,15 +1,15 @@
 package uk.gov.hmcts.reform.pbis.servicebus;
 
-import static java.util.Collections.singletonMap;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.IMessage;
 import com.microsoft.azure.servicebus.IMessageReceiver;
+
 import java.time.Duration;
 import java.util.Map;
 import java.util.UUID;
 
+import static java.util.Collections.singletonMap;
 
 public class ServiceBusClient implements IServiceBusClient {
 

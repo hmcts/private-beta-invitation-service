@@ -1,11 +1,10 @@
 package uk.gov.hmcts.reform.pbis.notify;
 
-import static java.util.Collections.EMPTY_MAP;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Test;
 import uk.gov.service.notify.SendEmailResponse;
 
+import static java.util.Collections.EMPTY_MAP;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class NotificationClientStubTest {
 

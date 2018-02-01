@@ -1,11 +1,11 @@
 package uk.gov.hmcts.reform.pbis;
 
+import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
-
 
 public class MessageProcessingResult {
 

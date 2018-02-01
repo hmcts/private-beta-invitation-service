@@ -5,7 +5,6 @@ import com.typesafe.config.ConfigFactory;
 
 import java.time.Duration;
 
-
 public class Configuration {
 
     private final Config config = ConfigFactory.load("environment.conf");

@@ -1,10 +1,10 @@
 package uk.gov.hmcts.reform.pbis.servicebus.client;
 
+import org.junit.Test;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
-
-import org.junit.Test;
 
 public class CloseTest extends AbstractServiceBusClientTest {
 

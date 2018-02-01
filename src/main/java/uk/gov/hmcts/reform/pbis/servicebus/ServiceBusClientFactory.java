@@ -6,7 +6,6 @@ import com.microsoft.azure.servicebus.ReceiveMode;
 
 import java.time.Duration;
 
-
 public class ServiceBusClientFactory implements IServiceBusClientFactory {
 
     private final String connectionString;

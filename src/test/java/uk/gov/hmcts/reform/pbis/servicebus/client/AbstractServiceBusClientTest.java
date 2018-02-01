@@ -1,14 +1,13 @@
 package uk.gov.hmcts.reform.pbis.servicebus.client;
 
 import com.microsoft.azure.servicebus.IMessageReceiver;
-
-import java.time.Duration;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusClient;
 
+import java.time.Duration;
 
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractServiceBusClientTest {

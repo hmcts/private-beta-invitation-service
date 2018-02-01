@@ -1,25 +1,8 @@
 package uk.gov.hmcts.reform.pbis.integration;
 
-import static java.util.stream.Collectors.toList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableMap;
 import com.microsoft.azure.servicebus.IMessage;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Stream;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +22,23 @@ import uk.gov.hmcts.reform.pbis.servicebus.MessageQueueProcessingTracker;
 import uk.gov.hmcts.reform.pbis.servicebus.MessageQueueProcessor;
 import uk.gov.hmcts.reform.pbis.utils.SampleData;
 
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Stream;
+import javax.validation.Validation;
+import javax.validation.Validator;
+
+import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest

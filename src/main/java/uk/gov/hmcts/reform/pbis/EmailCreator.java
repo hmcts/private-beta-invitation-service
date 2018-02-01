@@ -1,18 +1,18 @@
 package uk.gov.hmcts.reform.pbis;
 
-import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.FIRST_NAME;
-import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.LAST_NAME;
-import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.WELCOME_LINK;
-
 import com.google.common.collect.ImmutableMap;
+import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
+import uk.gov.hmcts.reform.pbis.model.EmailToSend;
+import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
-import uk.gov.hmcts.reform.pbis.model.EmailToSend;
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
+
+import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.FIRST_NAME;
+import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.LAST_NAME;
+import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.WELCOME_LINK;
 
 public class EmailCreator {
 

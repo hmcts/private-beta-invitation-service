@@ -1,14 +1,18 @@
 package uk.gov.hmcts.reform.pbis.utils;
 
-import static java.util.stream.Collectors.toList;
+import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 
+import static java.util.stream.Collectors.toList;
 
 public class SampleData {
+
+    private SampleData() {
+        // utility class constructor
+    }
 
     public static List<PrivateBetaRegistration> getSampleRegistrations(
         String service,

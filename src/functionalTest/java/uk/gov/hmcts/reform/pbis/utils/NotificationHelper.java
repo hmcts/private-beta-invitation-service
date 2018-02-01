@@ -1,10 +1,10 @@
 package uk.gov.hmcts.reform.pbis.utils;
 
-import java.util.List;
 import uk.gov.service.notify.Notification;
 import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientException;
 
+import java.util.List;
 
 public class NotificationHelper {
 
