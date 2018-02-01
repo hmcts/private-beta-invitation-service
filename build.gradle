@@ -34,8 +34,8 @@ tasks.withType(Checkstyle).each { checkstyleTask ->
 jacocoTestReport {
   executionData(test)
   reports {
-    xml.enabled true
-    csv.enabled false
+    xml.enabled = true
+    csv.enabled = false
     xml.destination file("${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml")
   }
 }
@@ -121,7 +121,7 @@ dependencies {
 
 task endToEndTest(type: Test) {
   description = "Runs end-to-end tests"
-  testClassesDir sourceSets.functionalTest.output.classesDir
+  testClassesDirs = sourceSets.functionalTest.output.classesDirs
   setClasspath sourceSets.functionalTest.runtimeClasspath
 
   useJUnit {
@@ -131,7 +131,7 @@ task endToEndTest(type: Test) {
 
 task integrationTest(type: Test) {
   description = "Runs integration tests"
-  testClassesDir sourceSets.functionalTest.output.classesDir
+  testClassesDirs = sourceSets.functionalTest.output.classesDirs
   setClasspath sourceSets.functionalTest.runtimeClasspath
 
   useJUnit {
