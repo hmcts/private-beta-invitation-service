@@ -4,6 +4,8 @@ import com.microsoft.applicationinsights.TelemetryClient;
 import com.microsoft.azure.servicebus.IMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import uk.gov.hmcts.reform.logging.appinsights.AbstractAppInsights;
 import uk.gov.hmcts.reform.pbis.MessageProcessingResult;
 import uk.gov.hmcts.reform.pbis.MessageProcessingResultType;
 
@@ -18,23 +20,22 @@ import static uk.gov.hmcts.reform.pbis.telemetry.MetricNames.TOTAL_MESSAGES_PER_
 /**
  * Logs events and sends telemetry data related with message queue processing.
  */
-public class MessageQueueProcessingTracker {
+@Component
+public class MessageQueueProcessingTracker extends AbstractAppInsights {
 
     private static final Logger logger =
         LoggerFactory.getLogger(MessageQueueProcessingTracker.class);
-
-    private final TelemetryClient telemetryClient;
 
     private int totalMessageCount = 0;
     private int failingMessageCount = 0;
 
     public MessageQueueProcessingTracker(TelemetryClient telemetryClient) {
-        this.telemetryClient = telemetryClient;
+        super(telemetryClient);
     }
 
     public void trackProcessingStarted() {
         logger.info("Processing messages from subscription queue.");
-        telemetryClient.trackEvent(MESSAGE_PROCESSING_RUN_STARTED);
+        telemetry.trackEvent(MESSAGE_PROCESSING_RUN_STARTED);
         totalMessageCount = 0;
         failingMessageCount = 0;
     }
@@ -97,13 +98,13 @@ public class MessageQueueProcessingTracker {
     private void sendTelemetryDataForMessage(MessageProcessingResult processingResult) {
         switch (processingResult.resultType) {
             case SUCCESS:
-                telemetryClient.trackEvent(EMAIL_SENT);
+                telemetry.trackEvent(EMAIL_SENT);
                 break;
             case ERROR:
-                telemetryClient.trackEvent(MESSAGE_PROCESSING_ERROR);
+                telemetry.trackEvent(MESSAGE_PROCESSING_ERROR);
                 break;
             case UNPROCESSABLE_MESSAGE:
-                telemetryClient.trackEvent(MESSAGE_REJECTED);
+                telemetry.trackEvent(MESSAGE_REJECTED);
                 break;
             default:
                 logger.warn("Unknown processing result type: {}", processingResult.resultType);
@@ -111,9 +112,9 @@ public class MessageQueueProcessingTracker {
     }
 
     private void sendTelemetryDataForCompletedRun(int messageCount, int failureCount) {
-        telemetryClient.trackEvent(MESSAGE_PROCESSING_RUN_COMPLETED);
-        telemetryClient.trackMetric(TOTAL_MESSAGES_PER_RUN, messageCount);
-        telemetryClient.trackMetric(FAILING_MESSAGES_PER_FUN, failureCount);
+        telemetry.trackEvent(MESSAGE_PROCESSING_RUN_COMPLETED);
+        telemetry.trackMetric(TOTAL_MESSAGES_PER_RUN, messageCount);
+        telemetry.trackMetric(FAILING_MESSAGES_PER_FUN, failureCount);
     }
 
     private void logMessageProcessingSuccess(IMessage message) {
