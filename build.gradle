@@ -16,7 +16,7 @@ version = '0.0.1'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-checkstyle.toolVersion = '8.2'
+checkstyle.toolVersion = '8.8'
 checkstyle.configFile = new File(rootDir, "checkstyle.xml")
 
 // make build fail on Checkstyle issues (https://github.com/gradle/gradle/issues/881)

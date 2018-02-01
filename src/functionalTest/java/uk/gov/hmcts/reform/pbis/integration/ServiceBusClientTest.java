@@ -1,18 +1,8 @@
 package uk.gov.hmcts.reform.pbis.integration;
 
-import static java.util.Collections.singletonMap;
-import static java.util.stream.Collectors.toList;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableMap;
 import com.microsoft.azure.servicebus.IMessage;
-
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Stream;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +12,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.gov.hmcts.reform.pbis.categories.IntegrationTests;
 
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Stream;
+
+import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest

@@ -2,8 +2,6 @@ package uk.gov.hmcts.reform.pbis.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.IMessage;
-import java.util.HashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,8 @@ import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusException;
 import uk.gov.hmcts.reform.pbis.utils.DeadLetterQueueHelper;
 import uk.gov.hmcts.reform.pbis.utils.ServiceBusFeeder;
 
+import java.util.HashMap;
+import java.util.Map;
 
 @TestPropertySource(properties =
     {

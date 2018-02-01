@@ -1,15 +1,5 @@
 package uk.gov.hmcts.reform.pbis;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyMap;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +12,15 @@ import uk.gov.hmcts.reform.pbis.notify.NotificationClientProvider;
 import uk.gov.service.notify.NotificationClientApi;
 import uk.gov.service.notify.NotificationClientException;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyMap;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmailServiceTest {

@@ -1,13 +1,5 @@
 package uk.gov.hmcts.reform.pbis.servicebus;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.ERROR;
-import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.SUCCESS;
-import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.UNPROCESSABLE_MESSAGE;
-
 import com.microsoft.applicationinsights.TelemetryClient;
 import com.microsoft.azure.servicebus.IMessage;
 import org.junit.Before;
@@ -17,6 +9,14 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import uk.gov.hmcts.reform.pbis.MessageProcessingResult;
 import uk.gov.hmcts.reform.pbis.MessageProcessingResultType;
+
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.ERROR;
+import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.SUCCESS;
+import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.UNPROCESSABLE_MESSAGE;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MessageQueueProcessingTrackerTest {

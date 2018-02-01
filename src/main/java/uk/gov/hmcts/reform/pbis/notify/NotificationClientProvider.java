@@ -1,13 +1,13 @@
 package uk.gov.hmcts.reform.pbis.notify;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import uk.gov.hmcts.reform.pbis.ServiceNotFoundException;
 import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
 import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientApi;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class NotificationClientProvider {
 

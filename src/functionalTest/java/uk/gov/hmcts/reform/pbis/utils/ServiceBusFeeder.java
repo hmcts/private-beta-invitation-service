@@ -8,11 +8,11 @@ import com.microsoft.azure.servicebus.Message;
 import com.microsoft.azure.servicebus.TopicClient;
 import com.microsoft.azure.servicebus.primitives.ConnectionStringBuilder;
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 
+import java.util.UUID;
 
 public class ServiceBusFeeder implements AutoCloseable {
 

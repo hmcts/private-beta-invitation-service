@@ -1,5 +1,27 @@
 package uk.gov.hmcts.reform.pbis.servicebus;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.azure.servicebus.IMessage;
+import com.microsoft.azure.servicebus.Message;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import uk.gov.hmcts.reform.pbis.EmailSendingException;
+import uk.gov.hmcts.reform.pbis.EmailService;
+import uk.gov.hmcts.reform.pbis.MessageProcessingResult;
+import uk.gov.hmcts.reform.pbis.MessageProcessingResultType;
+import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import javax.validation.Validation;
+import javax.validation.Validator;
+
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,29 +36,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.ERROR;
 import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.SUCCESS;
 import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.UNPROCESSABLE_MESSAGE;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microsoft.azure.servicebus.IMessage;
-import com.microsoft.azure.servicebus.Message;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import javax.validation.Validation;
-import javax.validation.Validator;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.hmcts.reform.pbis.EmailSendingException;
-import uk.gov.hmcts.reform.pbis.EmailService;
-import uk.gov.hmcts.reform.pbis.MessageProcessingResult;
-import uk.gov.hmcts.reform.pbis.MessageProcessingResultType;
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
-
 
 @RunWith(MockitoJUnitRunner.class)
 public class MessageQueueProcessorTest {

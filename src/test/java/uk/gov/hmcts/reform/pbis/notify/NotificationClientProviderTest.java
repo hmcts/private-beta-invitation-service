@@ -1,15 +1,15 @@
 package uk.gov.hmcts.reform.pbis.notify;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Arrays;
-import java.util.List;
 import org.junit.Test;
 import uk.gov.hmcts.reform.pbis.ServiceNotFoundException;
 import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
 import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientApi;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class NotificationClientProviderTest {
 

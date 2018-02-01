@@ -1,8 +1,5 @@
 package uk.gov.hmcts.reform.pbis;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +9,9 @@ import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
 import uk.gov.hmcts.reform.pbis.model.EmailToSend;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmailCreatorTest {

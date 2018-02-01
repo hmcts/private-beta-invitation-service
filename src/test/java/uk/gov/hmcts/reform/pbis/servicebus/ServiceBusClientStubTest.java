@@ -1,16 +1,16 @@
 package uk.gov.hmcts.reform.pbis.servicebus;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.Mockito.mock;
-
 import com.microsoft.azure.servicebus.IMessage;
+import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.Mockito.mock;
 
 public class ServiceBusClientStubTest {
 

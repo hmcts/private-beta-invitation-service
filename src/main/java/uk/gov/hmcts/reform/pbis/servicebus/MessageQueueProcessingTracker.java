@@ -1,5 +1,12 @@
 package uk.gov.hmcts.reform.pbis.servicebus;
 
+import com.microsoft.applicationinsights.TelemetryClient;
+import com.microsoft.azure.servicebus.IMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import uk.gov.hmcts.reform.pbis.MessageProcessingResult;
+import uk.gov.hmcts.reform.pbis.MessageProcessingResultType;
+
 import static uk.gov.hmcts.reform.pbis.telemetry.EventNames.EMAIL_SENT;
 import static uk.gov.hmcts.reform.pbis.telemetry.EventNames.MESSAGE_PROCESSING_ERROR;
 import static uk.gov.hmcts.reform.pbis.telemetry.EventNames.MESSAGE_PROCESSING_RUN_COMPLETED;
@@ -7,13 +14,6 @@ import static uk.gov.hmcts.reform.pbis.telemetry.EventNames.MESSAGE_PROCESSING_R
 import static uk.gov.hmcts.reform.pbis.telemetry.EventNames.MESSAGE_REJECTED;
 import static uk.gov.hmcts.reform.pbis.telemetry.MetricNames.FAILING_MESSAGES_PER_FUN;
 import static uk.gov.hmcts.reform.pbis.telemetry.MetricNames.TOTAL_MESSAGES_PER_RUN;
-
-import com.microsoft.applicationinsights.TelemetryClient;
-import com.microsoft.azure.servicebus.IMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import uk.gov.hmcts.reform.pbis.MessageProcessingResult;
-import uk.gov.hmcts.reform.pbis.MessageProcessingResultType;
 
 /**
  * Logs events and sends telemetry data related with message queue processing.

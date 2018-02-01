@@ -1,5 +1,9 @@
 package uk.gov.hmcts.reform.pbis.servicebus.client;
 
+import com.microsoft.azure.servicebus.IMessage;
+import org.junit.Test;
+import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusException;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertSame;
 import static org.mockito.BDDMockito.given;
@@ -7,11 +11,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-
-import com.microsoft.azure.servicebus.IMessage;
-import org.junit.Test;
-import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusException;
-
 
 public class ReceiveMessageTest extends AbstractServiceBusClientTest {
 

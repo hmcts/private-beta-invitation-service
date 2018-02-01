@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
 
-
 public class ServiceBusClientStub implements IServiceBusClient {
 
     private static final ServiceBusClientStub instance = new ServiceBusClientStub();

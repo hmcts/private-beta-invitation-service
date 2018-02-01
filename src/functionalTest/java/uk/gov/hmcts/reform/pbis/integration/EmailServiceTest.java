@@ -1,11 +1,5 @@
 package uk.gov.hmcts.reform.pbis.integration;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import java.util.List;
-import java.util.Optional;
-
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +20,11 @@ import uk.gov.hmcts.reform.pbis.utils.NotificationHelper;
 import uk.gov.hmcts.reform.pbis.utils.SampleData;
 import uk.gov.service.notify.Notification;
 
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest

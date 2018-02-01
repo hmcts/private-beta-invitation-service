@@ -1,18 +1,7 @@
 package uk.gov.hmcts.reform.pbis.servicebus;
 
-import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.invalidMessageData;
-import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.invalidMessageFormat;
-import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.processingError;
-import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.success;
-import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.unknownService;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.IMessage;
-import java.io.IOException;
-import java.util.Optional;
-import java.util.Set;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,6 +11,17 @@ import uk.gov.hmcts.reform.pbis.MessageProcessingResult;
 import uk.gov.hmcts.reform.pbis.ServiceNotFoundException;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 
+import java.io.IOException;
+import java.util.Optional;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+
+import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.invalidMessageData;
+import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.invalidMessageFormat;
+import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.processingError;
+import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.success;
+import static uk.gov.hmcts.reform.pbis.MessageProcessingResult.unknownService;
 
 /**
  * This service processes Azure Service Bus subscription queue.
