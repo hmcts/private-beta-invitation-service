@@ -15,5 +15,6 @@
 *.iws
 *.iml
 *.ipr
+/out
 
 .DS_store
