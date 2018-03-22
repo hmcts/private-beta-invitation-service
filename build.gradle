@@ -62,6 +62,10 @@ dependencyCheck {
 }
 
 repositories {
+  // until new projects get to jcenter
+  maven {
+    url  "https://dl.bintray.com/hmcts/hmcts-maven"
+  }
   jcenter()
 }
 
@@ -86,26 +90,34 @@ pmd {
 
 def versions = [
   springBoot: '1.5.10.RELEASE',
-  logging: '1.4.2',
+  logging: '1.5.0',
   hystrix: '1.4.2.RELEASE'
 ]
+
+configurations {
+  runtime.exclude group: 'com.microsoft.azure', module: 'applicationinsights-agent'
+}
 
 dependencies {
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: versions.springBoot
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: versions.springBoot
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: versions.springBoot
 
-  compile group: 'uk.gov.hmcts.reform', name: 'java-logging-spring', version: versions.logging
+  compile group: 'uk.gov.hmcts.reform', name: 'java-logging-appinsights', version: versions.logging
   compile group: 'uk.gov.hmcts.reform', name: 'java-logging-httpcomponents', version: versions.logging
+  compile group: 'uk.gov.hmcts.reform', name: 'java-logging-spring', version: versions.logging
   compile group: 'uk.gov.hmcts.reform', name: 'http-proxy-spring-boot-autoconfigure', version: '1.1.0'
+
+  compile group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '3.4.0-RELEASE'
+
   compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-hystrix', version: versions.hystrix
   compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-hystrix-dashboard', version: versions.hystrix
-  compile group: 'uk.gov.service.notify', name: 'notifications-java-client', version: '3.4.0-RELEASE'
+
   compile group: 'com.microsoft.azure', name: 'azure-servicebus', version: '1.1.0'
-  compile group: 'com.microsoft.azure', name: 'applicationinsights-web', version: '1.0.10'
 
   testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springBoot
   testCompile group: 'org.assertj', name: 'assertj-core', version: '3.9.0'
+  testCompile group: 'com.github.stefanbirkner', name: 'system-rules', version: '1.17.1'
   testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.7.3'
   testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.7.3'
 

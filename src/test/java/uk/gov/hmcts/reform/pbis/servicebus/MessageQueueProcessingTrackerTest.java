@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.pbis.servicebus;
 
 import com.microsoft.applicationinsights.TelemetryClient;
+import com.microsoft.applicationinsights.telemetry.TelemetryContext;
 import com.microsoft.azure.servicebus.IMessage;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +12,9 @@ import uk.gov.hmcts.reform.pbis.MessageProcessingResult;
 import uk.gov.hmcts.reform.pbis.MessageProcessingResultType;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.ERROR;
@@ -21,6 +24,8 @@ import static uk.gov.hmcts.reform.pbis.MessageProcessingResultType.UNPROCESSABLE
 @RunWith(MockitoJUnitRunner.class)
 public class MessageQueueProcessingTrackerTest {
 
+    private final TelemetryContext telemetryContext = new TelemetryContext();
+
     @Mock
     private TelemetryClient telemetryClient;
 
@@ -28,7 +33,14 @@ public class MessageQueueProcessingTrackerTest {
 
     @Before
     public void setUp() {
+        telemetryContext.setInstrumentationKey("some-key");
+
+        given(telemetryClient.getContext()).willReturn(telemetryContext);
+
         tracker = new MessageQueueProcessingTracker(telemetryClient);
+
+        // reset interactions with mock
+        reset(telemetryClient);
     }
 
     @Test
