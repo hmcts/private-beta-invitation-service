@@ -90,7 +90,7 @@ pmd {
 
 def versions = [
   springBoot: '1.5.10.RELEASE',
-  logging: '1.5.0',
+  logging: '2.0.2',
   hystrix: '1.4.2.RELEASE'
 ]
 
@@ -117,7 +117,6 @@ dependencies {
 
   testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springBoot
   testCompile group: 'org.assertj', name: 'assertj-core', version: '3.9.0'
-  testCompile group: 'com.github.stefanbirkner', name: 'system-rules', version: '1.17.1'
   testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.7.3'
   testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.7.3'
 
@@ -129,6 +128,10 @@ dependencies {
     'uk.gov.service.notify:notifications-java-client:3.8.0-RELEASE',
     'org.awaitility:awaitility:3.0.0',
   )
+}
+
+test {
+  environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
 }
 
 task endToEndTest(type: Test) {
