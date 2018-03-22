@@ -142,6 +142,8 @@ task endToEndTest(type: Test) {
   useJUnit {
     includeCategories 'uk.gov.hmcts.reform.pbis.categories.EndToEndTests'
   }
+
+  environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
 }
 
 task integrationTest(type: Test) {
@@ -152,6 +154,8 @@ task integrationTest(type: Test) {
   useJUnit {
     includeCategories 'uk.gov.hmcts.reform.pbis.categories.IntegrationTests'
   }
+
+  environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
 }
 
 project.tasks['sonarqube'].dependsOn test
