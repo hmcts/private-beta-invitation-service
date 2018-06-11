@@ -2,7 +2,7 @@ provider "azurerm" {}
 
 module "service" {
   source   = "git@github.com:contino/moj-module-webapp"
-  product  = "${var.product}-service"
+  product  = "${var.product}-${var.component}"
   location = "${var.location}"
   env      = "${var.env}"
   ilbIp    = "${var.ilbIp}"
