@@ -3,6 +3,10 @@ variable "product" {
   default = "private-beta-invitation"
 }
 
+variable "component" {
+  type = "string"
+}
+
 variable "location" {
   type    = "string"
   default = "UK South"
