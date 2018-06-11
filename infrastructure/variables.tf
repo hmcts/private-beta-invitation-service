@@ -19,3 +19,7 @@ variable "service_bus_polling_delay_ms" {
 }
 
 variable "ilbIp"{}
+
+variable "capacity" {
+  default = "1"
+}
