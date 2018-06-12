@@ -3,6 +3,10 @@ variable "product" {
   default = "private-beta-invitation"
 }
 
+variable "component" {
+  type = "string"
+}
+
 variable "location" {
   type    = "string"
   default = "UK South"
@@ -19,3 +23,4 @@ variable "service_bus_polling_delay_ms" {
 }
 
 variable "ilbIp"{}
+variable "subscription" {}

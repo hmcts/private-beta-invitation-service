@@ -18,4 +18,12 @@
 
   -->
 
+  <suppress>
+    <notes><![CDATA[
+     Does not apply, only used for communication with the service bus.
+    ]]></notes>
+    <gav regex="true">^com\.microsoft\.azure:adal4j:.*$</gav>
+    <cve>CVE-2011-1068</cve>
+  </suppress>
+
 </suppressions>
