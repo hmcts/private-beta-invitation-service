@@ -6,6 +6,7 @@ module "service" {
   location = "${var.location}"
   env      = "${var.env}"
   ilbIp    = "${var.ilbIp}"
+  capacity = "${var.capacity}"
   subscription  = "${var.subscription}"
 
   app_settings = {
