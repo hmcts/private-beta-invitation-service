@@ -170,7 +170,7 @@ sonarqube {
 }
 
 jar {
-  baseName 'private-beta-invitation-service'
+  archiveName 'private-beta-invitation-service.jar'
 
   manifest {
     attributes('Implementation-Version': project.version.toString())
