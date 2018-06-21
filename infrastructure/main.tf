@@ -2,6 +2,7 @@ provider "azurerm" {}
 
 locals {
   servicebus_subscription_name = "${var.product}-servicebus-sub-${var.env}"
+  servicebus_topic_name        = "${var.product}-servicebus-topic-${var.env}"
 }
 
 # Make sure the resource group exists
@@ -19,7 +20,7 @@ module "servicebus-namespace" {
 
 module "servicebus-topic" {
   source                = "git@github.com:hmcts/terraform-module-servicebus-topic.git"
-  name                  = "${var.product}-servicebus-topic-${var.env}"
+  name                  = "${local.servicebus_topic_name}"
   namespace_name        = "${module.servicebus-namespace.name}"
   resource_group_name   = "${azurerm_resource_group.rg.name}"
 }
@@ -28,7 +29,7 @@ module "servicebus-subscription" {
   source                = "git@github.com:hmcts/terraform-module-servicebus-subscription.git"
   name                  = "${local.servicebus_subscription_name}"
   namespace_name        = "${module.servicebus-namespace.name}"
-  topic_name            = "${module.servicebus-topic.name}"
+  topic_name            = "${local.servicebus_topic_name}"
   resource_group_name   = "${azurerm_resource_group.rg.name}"
 }
 
