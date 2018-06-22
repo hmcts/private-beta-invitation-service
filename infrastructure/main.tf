@@ -1,5 +1,9 @@
 provider "azurerm" {}
 
+locals {
+  subscription_name = "pbis"
+}
+
 # Make sure the resource group exists
 resource "azurerm_resource_group" "rg" {
   name     = "${var.product}-${var.component}-${var.env}"
@@ -22,7 +26,7 @@ module "servicebus-topic" {
 
 module "servicebus-subscription" {
   source                = "git@github.com:hmcts/terraform-module-servicebus-subscription.git"
-  name                  = "pbis"
+  name                  = "${local.subscription_name}"
   namespace_name        = "${module.servicebus-namespace.name}"
   topic_name            = "${module.servicebus-topic.name}"
   resource_group_name   = "${azurerm_resource_group.rg.name}"
@@ -42,6 +46,6 @@ module "service" {
     SERVICE_BUS_POLLING_DELAY_MS = "${var.service_bus_polling_delay_ms}"
     SPRING_PROFILES_ACTIVE = "${var.env}"
     # todo: refactor subscription module so that it exposes the conn string in its output.
-    SERVICE_BUS_CONNECTION_STRING = "${module.servicebus-topic.primary_send_and_listen_connection_string}/subscriptions/main"
+    SERVICE_BUS_CONNECTION_STRING = "${module.servicebus-topic.primary_send_and_listen_connection_string}/subscriptions/${local.subscription_name}"
   }
 }
