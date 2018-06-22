@@ -15,14 +15,14 @@ module "servicebus-namespace" {
 
 module "servicebus-topic" {
   source                = "git@github.com:hmcts/terraform-module-servicebus-topic.git"
-  name                  = "main"
+  name                  = "invitations"
   namespace_name        = "${module.servicebus-namespace.name}"
   resource_group_name   = "${azurerm_resource_group.rg.name}"
 }
 
 module "servicebus-subscription" {
   source                = "git@github.com:hmcts/terraform-module-servicebus-subscription.git"
-  name                  = "main"
+  name                  = "pbis"
   namespace_name        = "${module.servicebus-namespace.name}"
   topic_name            = "${module.servicebus-topic.name}"
   resource_group_name   = "${azurerm_resource_group.rg.name}"
