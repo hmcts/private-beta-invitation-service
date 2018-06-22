@@ -24,7 +24,7 @@ module "servicebus-subscription" {
   source                = "git@github.com:hmcts/terraform-module-servicebus-subscription.git"
   name                  = "main"
   namespace_name        = "${module.servicebus-namespace.name}"
-  topic_name            = "main"
+  topic_name            = "${module.servicebus-topic.name}"
   resource_group_name   = "${azurerm_resource_group.rg.name}"
 }
 
