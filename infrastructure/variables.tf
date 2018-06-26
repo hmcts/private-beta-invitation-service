@@ -1,6 +1,6 @@
 variable "product" {
   type    = "string"
-  default = "private-beta-invitation"
+  default = "pbis"
 }
 
 variable "component" {
