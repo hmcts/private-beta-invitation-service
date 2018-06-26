@@ -4,9 +4,9 @@
 
 def type = "java"
 
-def product = "private-beta-invitation"
+def product = "rpe"
 
-def app = "service"
+def app = "pbis"
 
 withPipeline(type, product, app) {
 }
