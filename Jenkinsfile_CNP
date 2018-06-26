@@ -4,7 +4,7 @@
 
 def type = "java"
 
-def product = "private-beta-invitation"
+def product = "pbi"
 
 def app = "service"
 

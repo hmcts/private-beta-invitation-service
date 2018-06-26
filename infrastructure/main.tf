@@ -1,7 +1,7 @@
 provider "azurerm" {}
 
 locals {
-  subscription_name = "pbis"
+  subscription_name = "pbi"
 }
 
 # Make sure the resource group exists
