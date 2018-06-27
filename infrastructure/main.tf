@@ -19,7 +19,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_resource_group" "vault_rg" {
-  name     = "${local.preview_vault_rg}"
+  name     = "${local.vault_rg}"
   location = "${var.location}"
 }
 
