@@ -3,8 +3,8 @@ provider "azurerm" {}
 locals {
   subscription_name = "pbi"
 
-  preview_vault_name     = "${var.product}"
-  default_vault_name     = "${var.product}-${var.env}"
+  preview_vault_name     = "${var.raw_product}-aat"
+  default_vault_name     = "${var.raw_product}-${var.env}"
   vault_name             = "${(var.env == "preview" || var.env == "spreview") ? local.preview_vault_name : local.default_vault_name}"
 }
 
