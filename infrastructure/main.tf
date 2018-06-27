@@ -44,8 +44,9 @@ module "service" {
 
   app_settings = {
     SERVICE_BUS_POLLING_DELAY_MS = "${var.service_bus_polling_delay_ms}"
-    SPRING_PROFILES_ACTIVE = "${var.env}"
     # todo: refactor subscription module so that it exposes the conn string in its output.
     SERVICE_BUS_CONNECTION_STRING = "${module.servicebus-topic.primary_send_and_listen_connection_string}/subscriptions/${local.subscription_name}"
+
+    TEST_SERVICE_NOTIFY_API_KEY = "${data.azurerm_key_vault_secret.test_service_notify_api_key}"
   }
 }
