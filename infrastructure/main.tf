@@ -2,6 +2,10 @@ provider "azurerm" {}
 
 locals {
   subscription_name = "pbi"
+
+  preview_vault_name     = "${var.raw_product}-aat"
+  default_vault_name     = "${var.raw_product}-${var.env}"
+  vault_name             = "${(var.env == "preview" || var.env == "spreview") ? local.preview_vault_name : local.default_vault_name}"
 }
 
 # Make sure the resource group exists
@@ -49,4 +53,16 @@ module "service" {
 
     TEST_SERVICE_NOTIFY_API_KEY = "${data.azurerm_key_vault_secret.test_service_notify_api_key}"
   }
+}
+
+module "key-vault" {
+  source              = "git@github.com:hmcts/moj-module-key-vault?ref=master"
+  name                = "${local.vault_name}"
+  product             = "${var.product}"
+  env                 = "${var.env}"
+  tenant_id           = "${var.tenant_id}"
+  object_id           = "${var.jenkins_AAD_objectId}"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
+  # dcd_cc-dev group object ID
+  product_group_object_id = "38f9dea6-e861-4a50-9e73-21e64f563537"
 }
