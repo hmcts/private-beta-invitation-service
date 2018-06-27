@@ -2,6 +2,10 @@ provider "azurerm" {}
 
 locals {
   subscription_name = "pbi"
+
+  preview_vault_name     = "${var.product}"
+  default_vault_name     = "${var.product}-${var.env}"
+  vault_name             = "${(var.env == "preview" || var.env == "spreview") ? local.preview_vault_name : local.default_vault_name}"
 }
 
 # Make sure the resource group exists
@@ -48,4 +52,16 @@ module "service" {
     # todo: refactor subscription module so that it exposes the conn string in its output.
     SERVICE_BUS_CONNECTION_STRING = "${module.servicebus-topic.primary_send_and_listen_connection_string}/subscriptions/${local.subscription_name}"
   }
+}
+
+module "key-vault" {
+  source              = "git@github.com:hmcts/moj-module-key-vault?ref=master"
+  name                = "${local.vault_name}"
+  product             = "${var.product}"
+  env                 = "${var.env}"
+  tenant_id           = "${var.tenant_id}"
+  object_id           = "${var.jenkins_AAD_objectId}"
+  resource_group_name = "${azurerm_resource_group.rg.name}"
+  # dcd_cc-dev group object ID
+  product_group_object_id = "38f9dea6-e861-4a50-9e73-21e64f563537"
 }
