@@ -6,11 +6,20 @@ locals {
   preview_vault_name     = "${var.raw_product}-aat"
   default_vault_name     = "${var.raw_product}-${var.env}"
   vault_name             = "${(var.env == "preview" || var.env == "spreview") ? local.preview_vault_name : local.default_vault_name}"
+
+  preview_vault_rg       = "${var.raw_product}-aat"
+  default_vault_rg       = "${var.raw_product}-${var.env}"
+  vault_rg               = "${(var.env == "preview" || var.env == "spreview") ? local.preview_vault_rg : local.default_vault_rg}"
 }
 
 # Make sure the resource group exists
 resource "azurerm_resource_group" "rg" {
   name     = "${var.product}-${var.component}-${var.env}"
+  location = "${var.location}"
+}
+
+resource "azurerm_resource_group" "vault_rg" {
+  name     = "${local.vault_rg}"
   location = "${var.location}"
 }
 
@@ -48,9 +57,10 @@ module "service" {
 
   app_settings = {
     SERVICE_BUS_POLLING_DELAY_MS = "${var.service_bus_polling_delay_ms}"
-    SPRING_PROFILES_ACTIVE = "${var.env}"
     # todo: refactor subscription module so that it exposes the conn string in its output.
     SERVICE_BUS_CONNECTION_STRING = "${module.servicebus-topic.primary_send_and_listen_connection_string}/subscriptions/${local.subscription_name}"
+
+    TEST_SERVICE_NOTIFY_API_KEY = "${data.azurerm_key_vault_secret.test_service_notify_api_key.value}"
   }
 }
 
@@ -61,7 +71,12 @@ module "key-vault" {
   env                 = "${var.env}"
   tenant_id           = "${var.tenant_id}"
   object_id           = "${var.jenkins_AAD_objectId}"
-  resource_group_name = "${azurerm_resource_group.rg.name}"
+  resource_group_name = "${azurerm_resource_group.vault_rg.name}"
   # dcd_cc-dev group object ID
   product_group_object_id = "38f9dea6-e861-4a50-9e73-21e64f563537"
+}
+
+data "azurerm_key_vault_secret" "test_service_notify_api_key" {
+  name = "test-service-notify-api-key"
+  vault_uri = "${module.key-vault.key_vault_uri}"
 }
