@@ -134,7 +134,7 @@ test {
   environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
 }
 
-task endToEndTest(type: Test) {
+task smoke(type: Test) {
   description = "Runs end-to-end tests"
   testClassesDirs = sourceSets.functionalTest.output.classesDirs
   setClasspath sourceSets.functionalTest.runtimeClasspath
