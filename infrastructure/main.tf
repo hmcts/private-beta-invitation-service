@@ -88,8 +88,8 @@ data "azurerm_key_vault_secret" "test_service_notify_api_key" {
   vault_uri = "${module.key-vault.key_vault_uri}"
 }
 
-# For other services / tests to use
-data "azurerm_key_vault_secret" "servicebus_conn_string" {
+# Store connection string in vault for other services / tests to use
+resource "azurerm_key_vault_secret" "servicebus_conn_string" {
   name = "servicebus-conn-string"
   vault_uri = "${module.key-vault.key_vault_uri}"
   value = "${module.servicebus-topic.primary_send_and_listen_connection_string}"
