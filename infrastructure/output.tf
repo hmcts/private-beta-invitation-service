@@ -11,7 +11,7 @@ output "microserviceName" {
 }
 
 #region Env vars for smoke test (transformed by Jenkins)
-output "TEST_SERVICE_BUS_TOPIV" {
+output "TEST_SERVICE_BUS_TOPIC" {
   value = "${local.topic_name}"
 }
 
