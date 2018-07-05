@@ -7,7 +7,7 @@ def product = "pbi"
 def app = "service"
 
 List<LinkedHashMap<String, Object>> secrets = [
-  secret('test-servicebus-conn-string', 'TEST_SERVICE_BUS_CONNECTION_STRING'),
+  secret('servicebus-conn-string', 'TEST_SERVICE_BUS_CONNECTION_STRING'),
   secret('test-service-notify-api-key', 'TEST_NOTIFY_API_KEY'),
 ]
 

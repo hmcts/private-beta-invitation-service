@@ -88,9 +88,9 @@ data "azurerm_key_vault_secret" "test_service_notify_api_key" {
   vault_uri = "${module.key-vault.key_vault_uri}"
 }
 
-# used by jenkins to set env var for smoke test
-data "azurerm_key_vault_secret" "test_servicebus_conn_string" {
-  name = "test-servicebus-conn-string"
+# For other services / tests to use
+data "azurerm_key_vault_secret" "servicebus_conn_string" {
+  name = "servicebus-conn-string"
   vault_uri = "${module.key-vault.key_vault_uri}"
   value = "${module.servicebus-topic.primary_send_and_listen_connection_string}"
 }
