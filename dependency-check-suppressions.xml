@@ -26,4 +26,12 @@
     <cve>CVE-2011-1068</cve>
   </suppress>
 
+  <suppress>
+    <notes><![CDATA[
+      Imported by hystrix dashboard. no newer version available as of yet.
+    ]]></notes>
+    <gav regex="true">^org\.webjars:d3js:.*$</gav>
+    <cve>CVE-2017-16044</cve>
+  </suppress>
+
 </suppressions>
