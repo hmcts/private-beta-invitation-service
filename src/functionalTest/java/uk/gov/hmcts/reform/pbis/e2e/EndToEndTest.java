@@ -87,9 +87,12 @@ public class EndToEndTest {
 
         softly.assertThat(email.getNotificationType()).isEqualTo("email");
         softly.assertThat(email.getTemplateId().toString()).isEqualTo(config.getTemplateId());
-        softly.assertThat(email.getBody()).contains("First name: " + registration.firstName);
-        softly.assertThat(email.getBody()).contains("Last name: " + registration.lastName);
-        softly.assertThat(email.getBody()).contains("Welcome link: " + config.getWelcomeLink());
+
+        // check email template was filled with appropriate values
+        softly.assertThat(email.getBody()).contains(registration.firstName);
+        softly.assertThat(email.getBody()).contains(registration.lastName);
+        softly.assertThat(email.getBody()).contains(config.getWelcomeLink());
+
         softly.assertAll();
     }
 

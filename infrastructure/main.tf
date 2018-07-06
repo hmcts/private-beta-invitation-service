@@ -2,6 +2,7 @@ provider "azurerm" {}
 
 locals {
   subscription_name = "pbi"
+  topic_name = "invitations"
 
   preview_vault_name     = "${var.raw_product}-aat"
   default_vault_name     = "${var.raw_product}-${var.env}"
@@ -32,7 +33,7 @@ module "servicebus-namespace" {
 
 module "servicebus-topic" {
   source                = "git@github.com:hmcts/terraform-module-servicebus-topic.git"
-  name                  = "invitations"
+  name                  = "${local.topic_name}"
   namespace_name        = "${module.servicebus-namespace.name}"
   resource_group_name   = "${azurerm_resource_group.rg.name}"
 }
@@ -76,7 +77,20 @@ module "key-vault" {
   product_group_object_id = "38f9dea6-e861-4a50-9e73-21e64f563537"
 }
 
+# used in output
+data "azurerm_key_vault" "vault" {
+  name = "${local.vault_name}"
+  resource_group_name = "${local.vault_rg}"
+}
+
 data "azurerm_key_vault_secret" "test_service_notify_api_key" {
   name = "test-service-notify-api-key"
   vault_uri = "${module.key-vault.key_vault_uri}"
+}
+
+# Store connection string in vault for other services / tests to use
+resource "azurerm_key_vault_secret" "servicebus_conn_string" {
+  name = "servicebus-conn-string"
+  vault_uri = "${module.key-vault.key_vault_uri}"
+  value = "${module.servicebus-topic.primary_send_and_listen_connection_string}"
 }
