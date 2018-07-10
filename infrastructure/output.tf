@@ -1,5 +1,5 @@
 output "vaultUri" {
-  value = "${data.azurerm_key_vault.vault.vault_uri}"
+  value = "${module.key-vault.key_vault_uri}"
 }
 
 output "vaultName" {
