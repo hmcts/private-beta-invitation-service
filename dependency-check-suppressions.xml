@@ -28,6 +28,15 @@
 
   <suppress>
     <notes><![CDATA[
+    Temporary.
+    No newer version available for spring boot 1.x atm.
+   ]]></notes>
+    <cpe>cpe:/a:pivotal_software:spring_framework</cpe>
+    <cve>CVE-2018-1258</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
       Imported by hystrix dashboard. no newer version available as of yet.
     ]]></notes>
     <gav regex="true">^org\.webjars:d3js:.*$</gav>

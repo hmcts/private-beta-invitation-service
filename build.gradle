@@ -3,7 +3,7 @@ plugins {
   id 'checkstyle'
   id 'jacoco'
   id 'io.spring.dependency-management' version '1.0.5.RELEASE'
-  id 'org.springframework.boot' version '1.5.13.RELEASE'
+  id 'org.springframework.boot' version '1.5.14.RELEASE'
   id 'org.owasp.dependencycheck' version '3.2.1'
   id 'com.github.ben-manes.versions' version '0.17.0'
   id 'org.sonarqube' version '2.6.1'
@@ -89,9 +89,9 @@ pmd {
 }
 
 def versions = [
-  springBoot: '1.5.13.RELEASE',
+  springBoot: '1.5.14.RELEASE',
   logging: '2.0.2',
-  hystrix: '1.4.4.RELEASE'
+  hystrix: '1.4.5.RELEASE'
 ]
 
 configurations {
@@ -113,7 +113,7 @@ dependencies {
   compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-hystrix', version: versions.hystrix
   compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-hystrix-dashboard', version: versions.hystrix
 
-  compile group: 'com.microsoft.azure', name: 'azure-servicebus', version: '1.2.5'
+  compile group: 'com.microsoft.azure', name: 'azure-servicebus', version: '1.2.6'
 
   testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springBoot
   testCompile group: 'org.assertj', name: 'assertj-core', version: '3.9.0'
