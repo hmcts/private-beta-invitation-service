@@ -78,12 +78,6 @@ module "key-vault" {
   product_group_object_id = "38f9dea6-e861-4a50-9e73-21e64f563537"
 }
 
-# used in output
-data "azurerm_key_vault" "vault" {
-  name = "${local.vault_name}"
-  resource_group_name = "${local.vault_rg}"
-}
-
 data "azurerm_key_vault_secret" "test_service_notify_api_key" {
   name = "test-service-notify-api-key"
   vault_uri = "${module.key-vault.key_vault_uri}"
