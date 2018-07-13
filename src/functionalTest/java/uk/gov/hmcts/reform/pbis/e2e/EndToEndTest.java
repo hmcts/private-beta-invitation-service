@@ -141,7 +141,7 @@ public class EndToEndTest {
             serviceBusFeeder.sendMessage(registration);
         }
 
-        waitForProcessing();
+        registrations.forEach(r -> waitUntilRegistrationIsProcessed(r.referenceId));
 
         List<String> referenceIds = registrations.stream()
             .map(r -> r.referenceId)
