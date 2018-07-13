@@ -39,3 +39,7 @@ variable "capacity" {
 }
 
 variable "subscription" {}
+
+variable "common_tags" {
+  type = "map"
+}
