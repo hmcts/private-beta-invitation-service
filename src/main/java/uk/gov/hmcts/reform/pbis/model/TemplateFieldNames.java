@@ -1,18 +1,11 @@
 package uk.gov.hmcts.reform.pbis.model;
 
-public enum TemplateFieldNames {
+public final class TemplateFieldNames {
 
-    FIRST_NAME("first name"),
-    LAST_NAME("last name"),
-    WELCOME_LINK("welcome link");
+    public static final String FIRST_NAME = "first name";
+    public static final String LAST_NAME = "last name";
+    public static final String WELCOME_LINK = "welcome link";
 
-    private final String fieldName;
-
-    TemplateFieldNames(String fieldName) {
-        this.fieldName = fieldName;
-    }
-
-    public String getFieldName() {
-        return fieldName;
+    private TemplateFieldNames() {
     }
 }
