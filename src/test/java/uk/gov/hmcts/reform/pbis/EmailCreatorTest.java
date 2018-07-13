@@ -12,13 +12,12 @@ import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.FIRST_NAME;
+import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.LAST_NAME;
+import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.WELCOME_LINK;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmailCreatorTest {
-
-    private static final String FIRST_NAME_FIELD = "first name";
-    private static final String LAST_NAME_FIELD = "last name";
-    private static final String WELCOME_LINK_FIELD = "welcome link";
 
     private static final EmailTemplateMapping mapping1 =
         createMapping("service1", "templateId1", "apiKey1", "welcomeLink1");
@@ -26,8 +25,7 @@ public class EmailCreatorTest {
     private static final EmailTemplateMapping mapping2 =
         createMapping("service2", "templateId2", "apiKey2", "welcomeLink2");
 
-    private static final List<EmailTemplateMapping> emailTemplateMappings =
-        Lists.newArrayList(mapping1, mapping2);
+    private static final List<EmailTemplateMapping> emailTemplateMappings = Lists.newArrayList(mapping1, mapping2);
 
     private EmailCreator emailCreator;
 
@@ -44,29 +42,35 @@ public class EmailCreatorTest {
 
     @Test
     public void createEmailToSend_should_map_service_to_the_right_template() {
+        // given
         PrivateBetaRegistration registration = getPrivateBetaRegistration(mapping1.getService());
+
+        // when
         EmailToSend email = emailCreator.createEmailToSend(registration);
 
+        // then
         assertThat(email.templateId).isEqualTo(mapping1.getTemplateId());
     }
 
     @Test
     public void createEmailToSend_should_return_email_with_data_from_registration() {
+        // given
         PrivateBetaRegistration registration = getPrivateBetaRegistration(mapping2.getService());
+
+        // when
         EmailToSend email = emailCreator.createEmailToSend(registration);
 
+        // then
         assertThat(email.emailAddress).isEqualTo(registration.emailAddress);
         assertThat(email.referenceId).isEqualTo(registration.referenceId);
 
         assertThat(email.templateFields.keySet()).containsExactlyInAnyOrder(
-            FIRST_NAME_FIELD, LAST_NAME_FIELD, WELCOME_LINK_FIELD
+            FIRST_NAME, LAST_NAME, WELCOME_LINK
         );
 
-        assertThat(email.templateFields.get(FIRST_NAME_FIELD)).isEqualTo(registration.firstName);
-        assertThat(email.templateFields.get(LAST_NAME_FIELD)).isEqualTo(registration.lastName);
-        assertThat(
-            email.templateFields.get(WELCOME_LINK_FIELD)).isEqualTo(mapping2.getWelcomeLink()
-        );
+        assertThat(email.templateFields.get(FIRST_NAME)).isEqualTo(registration.firstName);
+        assertThat(email.templateFields.get(LAST_NAME)).isEqualTo(registration.lastName);
+        assertThat(email.templateFields.get(WELCOME_LINK)).isEqualTo(mapping2.getWelcomeLink());
     }
 
     private PrivateBetaRegistration getPrivateBetaRegistration(String service) {
