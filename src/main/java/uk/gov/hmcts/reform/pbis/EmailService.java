@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.pbis.model.EmailToSend;
 import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.notify.NotificationClientProvider;
-import uk.gov.service.notify.NotificationClientApi;
-import uk.gov.service.notify.NotificationClientException;
 
 @Service
 public class EmailService {
@@ -27,44 +25,32 @@ public class EmailService {
         this.emailCreator = emailCreator;
     }
 
-    public void sendWelcomeEmail(PrivateBetaRegistration privateBetaRegistration) {
-        logger.info(String.format(
-            "Sending welcome email. Reference ID: %s", privateBetaRegistration.referenceId
-        ));
+    public void sendWelcomeEmail(PrivateBetaRegistration reg) {
+        logger.info("Sending welcome email. Reference ID: {}", reg.referenceId);
 
         try {
-            EmailToSend emailToSend = emailCreator.createEmailToSend(privateBetaRegistration);
+            EmailToSend emailToSend = emailCreator.createEmailToSend(reg);
 
-            NotificationClientApi notificationClient =
-                notificationClientProvider.getClient(privateBetaRegistration.service);
+            notificationClientProvider
+                .getClient(reg.service)
+                .sendEmail(
+                    emailToSend.templateId,
+                    emailToSend.emailAddress,
+                    emailToSend.templateFields,
+                    emailToSend.referenceId
+                );
 
-            sendEmail(emailToSend, notificationClient);
-
-            logger.info(String.format(
-                "Welcome email sent. Reference ID: %s", privateBetaRegistration.referenceId
-            ));
+            logger.info("Welcome email sent. Reference ID: {}", reg.referenceId);
         } catch (ServiceNotFoundException e) {
             throw e;
         } catch (Exception e) {
             String errorMessage = String.format(
                 "Failed to send email. Reference ID: %s",
-                privateBetaRegistration.referenceId
+                reg.referenceId
             );
 
             throw new EmailSendingException(errorMessage, e);
         }
     }
 
-    private void sendEmail(
-        EmailToSend emailToSend,
-        NotificationClientApi notificationClient
-    ) throws NotificationClientException {
-
-        notificationClient.sendEmail(
-            emailToSend.templateId,
-            emailToSend.emailAddress,
-            emailToSend.templateFields,
-            emailToSend.referenceId
-        );
-    }
 }

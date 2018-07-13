@@ -8,8 +8,8 @@ import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
 import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.FIRST_NAME;
 import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.LAST_NAME;
 import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.WELCOME_LINK;
@@ -21,7 +21,7 @@ public class EmailCreator {
     public EmailCreator(List<EmailTemplateMapping> mappings) {
         this.emailTemplateMappings = mappings
             .stream()
-            .collect(Collectors.toMap(
+            .collect(toMap(
                 mapping -> mapping.getService(), Function.identity()
             ));
     }
@@ -29,6 +29,7 @@ public class EmailCreator {
     /**
      * Converts the given private beta registration into an object representing
      * email to be sent via notification service.
+     *
      * @param registration Details of private beta registration
      * @return Complete information about the email to be sent
      */
@@ -39,20 +40,13 @@ public class EmailCreator {
         return new EmailToSend(
             registration.emailAddress,
             emailTemplateMappings.get(registration.service).getTemplateId(),
-            getFieldsForTemplate(registration),
+            ImmutableMap.of(
+                FIRST_NAME, registration.firstName,
+                LAST_NAME, registration.lastName,
+                WELCOME_LINK, emailTemplateMappings.get(registration.service).getWelcomeLink()
+            ),
             registration.referenceId
         );
-    }
-
-    private Map<String, String> getFieldsForTemplate(final PrivateBetaRegistration registration) {
-        return ImmutableMap.<String, String>builder()
-            .put(FIRST_NAME.getFieldName(), registration.firstName)
-            .put(LAST_NAME.getFieldName(), registration.lastName)
-            .put(
-                WELCOME_LINK.getFieldName(),
-                emailTemplateMappings.get(registration.service).getWelcomeLink()
-            )
-            .build();
     }
 
     private void assertTemplateConfiguredForService(final String service) {
