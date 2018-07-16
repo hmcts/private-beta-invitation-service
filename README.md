@@ -9,6 +9,38 @@ a new person that has agreed to join private beta and if there is one,
 it calls [GOV.UK Notify](https://www.gov.uk/government/publications/govuk-notify)
 to send the welcome email, using the appropriate email template.
 
+## Usage
+
+### Gov Notify configuration
+
+Create a template that uses the following fields:
+- `((first name))`
+- `((last name))`
+- `((welcome link))`
+
+### Service configuration
+
+Follow the steps described in [Configuring email template details for each service](configuring-email-template-details-for-each-service) section.
+
+### Sending emails
+
+A message in the following format needs to be put on a queue:
+```json
+{
+  "reference_id" : "40d96b76-1eb3-453d-872c-9557f77ad808",
+  "service" : "some_service_name",
+  "email_address": "john@example.gov.uk",
+  "first_name": "John",
+  "last_name": "Smith"
+}
+```
+
+`reference_id` - unique reference of the invitation
+`service` - name of the service this invitation is related to  
+`email_address` - recipient email address  
+`first_name` - recipient first name  
+`last_name` - recipient last name  
+
 ## Building and deploying the application
 
 ### Building the application
