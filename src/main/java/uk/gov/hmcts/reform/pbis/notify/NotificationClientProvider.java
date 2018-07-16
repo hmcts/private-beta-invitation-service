@@ -1,7 +1,7 @@
 package uk.gov.hmcts.reform.pbis.notify;
 
 import uk.gov.hmcts.reform.pbis.ServiceNotFoundException;
-import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
+import uk.gov.hmcts.reform.pbis.config.EmailTemplateMapping;
 import uk.gov.service.notify.NotificationClient;
 import uk.gov.service.notify.NotificationClientApi;
 

@@ -1,6 +1,6 @@
 package uk.gov.hmcts.reform.pbis.utils;
 
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
+import uk.gov.hmcts.reform.pbis.servicebus.PrivateBetaRegistration;
 
 import java.util.List;
 import java.util.UUID;

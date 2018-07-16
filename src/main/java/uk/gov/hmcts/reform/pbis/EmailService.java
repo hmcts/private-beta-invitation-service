@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.pbis.model.EmailToSend;
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
+import uk.gov.hmcts.reform.pbis.notify.EmailToSend;
+import uk.gov.hmcts.reform.pbis.servicebus.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.notify.NotificationClientProvider;
 
 @Service

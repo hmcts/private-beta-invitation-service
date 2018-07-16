@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.pbis.model;
+package uk.gov.hmcts.reform.pbis.notify;
 
 public final class TemplateFieldNames {
 

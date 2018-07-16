@@ -10,7 +10,7 @@ import com.microsoft.azure.servicebus.primitives.ConnectionStringBuilder;
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
+import uk.gov.hmcts.reform.pbis.servicebus.PrivateBetaRegistration;
 
 import java.util.UUID;
 

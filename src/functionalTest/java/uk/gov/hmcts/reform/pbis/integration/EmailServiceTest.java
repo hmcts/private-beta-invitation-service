@@ -14,7 +14,7 @@ import uk.gov.hmcts.reform.pbis.EmailCreator;
 import uk.gov.hmcts.reform.pbis.EmailService;
 import uk.gov.hmcts.reform.pbis.ServiceNotFoundException;
 import uk.gov.hmcts.reform.pbis.categories.IntegrationTests;
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
+import uk.gov.hmcts.reform.pbis.servicebus.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.notify.NotificationClientProvider;
 import uk.gov.hmcts.reform.pbis.utils.NotificationHelper;
 import uk.gov.hmcts.reform.pbis.utils.SampleData;

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.pbis.model;
+package uk.gov.hmcts.reform.pbis.servicebus;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Email;
