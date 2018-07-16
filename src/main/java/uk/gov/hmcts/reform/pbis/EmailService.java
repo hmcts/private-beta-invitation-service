@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.pbis.notify.EmailToSend;
-import uk.gov.hmcts.reform.pbis.servicebus.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.notify.NotificationClientProvider;
+import uk.gov.hmcts.reform.pbis.servicebus.PrivateBetaRegistration;
 
 @Service
 public class EmailService {
