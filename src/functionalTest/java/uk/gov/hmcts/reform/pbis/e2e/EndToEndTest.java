@@ -17,10 +17,10 @@ import uk.gov.service.notify.Notification;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleInvalidRegistration;
@@ -142,7 +142,7 @@ public class EndToEndTest {
         List<PrivateBetaRegistration> registrations =
             Stream.generate(() -> getSampleRegistration(config.getServiceName()))
                 .limit(numberOfMessages)
-                .collect(Collectors.toList());
+                .collect(toList());
 
         for (PrivateBetaRegistration registration : registrations) {
             serviceBusFeeder.sendMessage(registration);
@@ -152,7 +152,7 @@ public class EndToEndTest {
 
         List<String> referenceIds = registrations.stream()
             .map(r -> r.referenceId)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         assertThat(referenceIds).allMatch(
             referenceId -> notificationHelper.getSentEmails(referenceId).size() == 1
