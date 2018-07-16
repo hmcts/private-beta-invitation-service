@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.pbis.e2e;
 
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
 import org.assertj.core.api.SoftAssertions;
-import org.awaitility.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,10 +18,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleInvalidRegistration;
 import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleRegistration;
 
@@ -30,11 +27,6 @@ import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleRegistration;
 public class FunctionalTest {
 
     private static final Configuration config = new Configuration();
-
-    private static final Duration MAX_WAIT_TIME = new Duration(
-        config.getServiceBusPollingDelayInMs() + 2000,
-        MILLISECONDS
-    );
 
     private ServiceBusFeeder serviceBusFeeder;
     private NotificationHelper notificationHelper;
@@ -72,7 +64,7 @@ public class FunctionalTest {
 
         serviceBusFeeder.sendMessage(registration);
 
-        waitUntilRegistrationIsProcessed(registration.referenceId);
+        notificationHelper.waitForNotificationToBeConsumed(registration.referenceId);
 
         List<Notification> emails = notificationHelper.getSentEmails(registration.referenceId);
 
@@ -108,7 +100,7 @@ public class FunctionalTest {
         serviceBusFeeder.sendMessage(invalidRegistration);
         serviceBusFeeder.sendMessage(validRegistration);
 
-        waitUntilRegistrationIsProcessed(validRegistration.referenceId);
+        notificationHelper.waitForNotificationToBeConsumed(validRegistration.referenceId);
 
         List<Notification> invalidInvitationEmails = notificationHelper.getSentEmails(invalidRegistration.referenceId);
 
@@ -128,7 +120,7 @@ public class FunctionalTest {
         serviceBusFeeder.sendMessage(knownService);
 
         // and
-        waitUntilRegistrationIsProcessed(knownService.referenceId);
+        notificationHelper.waitForNotificationToBeConsumed(knownService.referenceId);
         List<Notification> unknownServiceEmails = notificationHelper.getSentEmails(unknownService.referenceId);
 
         // then
@@ -148,7 +140,7 @@ public class FunctionalTest {
             serviceBusFeeder.sendMessage(registration);
         }
 
-        registrations.forEach(r -> waitUntilRegistrationIsProcessed(r.referenceId));
+        registrations.forEach(r -> notificationHelper.waitForNotificationToBeConsumed(r.referenceId));
 
         List<String> referenceIds = registrations.stream()
             .map(r -> r.referenceId)
@@ -171,12 +163,5 @@ public class FunctionalTest {
         assertThat(deadLetterQueueHelper.receiveMessage())
             .as("check if dead letter queue is empty")
             .isNull();
-    }
-
-    private void waitUntilRegistrationIsProcessed(String referenceId) {
-        await()
-            .atMost(MAX_WAIT_TIME)
-            .pollDelay(500, MILLISECONDS)
-            .until(() -> !notificationHelper.getSentEmails(referenceId).isEmpty());
     }
 }

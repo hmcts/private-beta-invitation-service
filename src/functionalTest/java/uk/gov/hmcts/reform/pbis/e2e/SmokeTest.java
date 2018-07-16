@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.pbis.e2e;
 
-import org.awaitility.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,10 +10,7 @@ import uk.gov.hmcts.reform.pbis.servicebus.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.utils.NotificationHelper;
 import uk.gov.hmcts.reform.pbis.utils.ServiceBusFeeder;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.awaitility.Awaitility.await;
-import static org.awaitility.Duration.FIVE_SECONDS;
 import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleRegistration;
 
 @Category(SmokeTests.class)
@@ -44,16 +40,9 @@ public class SmokeTest {
         serviceBusFeeder.sendMessage(validReg);
 
         // then
-        assertThatCode(() -> waitForNotificationToBeConsumed(validReg.referenceId))
+        assertThatCode(() -> notificationHelper.waitForNotificationToBeConsumed(validReg.referenceId))
             .as("Notification should be consumed by GOV Notify")
             .doesNotThrowAnyException();
-    }
-
-    private void waitForNotificationToBeConsumed(String referenceId) {
-        await()
-            .atMost(new Duration(config.getServiceBusPollingDelayInMs(), MILLISECONDS).plus(FIVE_SECONDS))
-            .pollDelay(500, MILLISECONDS)
-            .until(() -> !notificationHelper.getSentEmails(referenceId).isEmpty());
     }
 
     @After
