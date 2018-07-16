@@ -17,11 +17,11 @@ import uk.gov.service.notify.Notification;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.assertj.core.api.Java6Assertions.assertThat;
+import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleInvalidRegistration;
 import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleRegistration;
@@ -98,34 +98,41 @@ public class EndToEndTest {
 
     @Test
     public void should_not_send_email_when_message_is_invalid() throws Exception {
-        serviceBusFeeder.sendMessage("invalid format");
-
+        //given
+        String invalidQueueMessage = "invalid format";
         PrivateBetaRegistration invalidRegistration = getSampleInvalidRegistration();
+        PrivateBetaRegistration validRegistration = getSampleRegistration(config.getServiceName());
+
+        // when
+        serviceBusFeeder.sendMessage(invalidQueueMessage);
         serviceBusFeeder.sendMessage(invalidRegistration);
+        serviceBusFeeder.sendMessage(validRegistration);
 
-        waitForProcessing();
+        waitUntilRegistrationIsProcessed(validRegistration.referenceId);
 
-        List<Notification> sentEmails =
-            notificationHelper.getSentEmails(invalidRegistration.referenceId);
+        List<Notification> invalidInvitationEmails = notificationHelper.getSentEmails(invalidRegistration.referenceId);
 
-        assertThat(sentEmails).isEmpty();
-
+        // then
+        assertThat(invalidInvitationEmails).isEmpty();
         assertTwoMessagesInDeadLetterQueue();
     }
 
     @Test
     public void should_not_send_email_when_message_references_unknown_service() throws Exception {
-        PrivateBetaRegistration registrationWithUnknownService =
-            getSampleRegistration("unknown-service-123");
+        // given
+        PrivateBetaRegistration unknownService = getSampleRegistration("unknown-service-123");
+        PrivateBetaRegistration knownService = getSampleRegistration(config.getServiceName());
 
-        serviceBusFeeder.sendMessage(registrationWithUnknownService);
+        // when
+        serviceBusFeeder.sendMessage(unknownService);
+        serviceBusFeeder.sendMessage(knownService);
 
-        waitForProcessing();
+        // and
+        waitUntilRegistrationIsProcessed(knownService.referenceId);
+        List<Notification> unknownServiceEmails = notificationHelper.getSentEmails(unknownService.referenceId);
 
-        List<Notification> sentEmails =
-            notificationHelper.getSentEmails(registrationWithUnknownService.referenceId);
-
-        assertThat(sentEmails).isEmpty();
+        // then
+        assertThat(unknownServiceEmails).isEmpty();
     }
 
     @Test
@@ -135,7 +142,7 @@ public class EndToEndTest {
         List<PrivateBetaRegistration> registrations =
             Stream.generate(() -> getSampleRegistration(config.getServiceName()))
                 .limit(numberOfMessages)
-                .collect(Collectors.toList());
+                .collect(toList());
 
         for (PrivateBetaRegistration registration : registrations) {
             serviceBusFeeder.sendMessage(registration);
@@ -145,7 +152,7 @@ public class EndToEndTest {
 
         List<String> referenceIds = registrations.stream()
             .map(r -> r.referenceId)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         assertThat(referenceIds).allMatch(
             referenceId -> notificationHelper.getSentEmails(referenceId).size() == 1
@@ -164,15 +171,6 @@ public class EndToEndTest {
         assertThat(deadLetterQueueHelper.receiveMessage())
             .as("check if dead letter queue is empty")
             .isNull();
-    }
-
-    private void waitForProcessing() throws Exception {
-        // Sending a valid message. When the email is sent, we know that the service
-        // has processed the subscription.
-        PrivateBetaRegistration registrationWithKnownService =
-            getSampleRegistration(config.getServiceName());
-        serviceBusFeeder.sendMessage(registrationWithKnownService);
-        waitUntilRegistrationIsProcessed(registrationWithKnownService.referenceId);
     }
 
     private void waitUntilRegistrationIsProcessed(String referenceId) {
