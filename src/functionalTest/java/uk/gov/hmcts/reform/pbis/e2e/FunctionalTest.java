@@ -8,8 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import uk.gov.hmcts.reform.pbis.Configuration;
-import uk.gov.hmcts.reform.pbis.categories.EndToEndTests;
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
+import uk.gov.hmcts.reform.pbis.categories.FunctionalTests;
+import uk.gov.hmcts.reform.pbis.servicebus.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.utils.DeadLetterQueueHelper;
 import uk.gov.hmcts.reform.pbis.utils.NotificationHelper;
 import uk.gov.hmcts.reform.pbis.utils.ServiceBusFeeder;
@@ -26,8 +26,8 @@ import static org.awaitility.Awaitility.await;
 import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleInvalidRegistration;
 import static uk.gov.hmcts.reform.pbis.utils.SampleData.getSampleRegistration;
 
-@Category(EndToEndTests.class)
-public class EndToEndTest {
+@Category(FunctionalTests.class)
+public class FunctionalTest {
 
     private static final Configuration config = new Configuration();
 

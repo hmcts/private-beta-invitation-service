@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.pbis.EmailService;
 import uk.gov.hmcts.reform.pbis.MessageProcessingResult;
 import uk.gov.hmcts.reform.pbis.ServiceNotFoundException;
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 
 import java.io.IOException;
 import java.util.Optional;
