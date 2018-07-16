@@ -6,7 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.hmcts.reform.pbis.EmailCreator;
-import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
 import uk.gov.hmcts.reform.pbis.notify.NotificationClientProvider;
 import uk.gov.hmcts.reform.pbis.servicebus.IServiceBusClientFactory;
 import uk.gov.hmcts.reform.pbis.servicebus.ServiceBusClientFactory;

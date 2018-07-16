@@ -15,11 +15,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.gov.hmcts.reform.pbis.EmailService;
 import uk.gov.hmcts.reform.pbis.ServiceNotFoundException;
 import uk.gov.hmcts.reform.pbis.categories.IntegrationTests;
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.servicebus.IServiceBusClient;
 import uk.gov.hmcts.reform.pbis.servicebus.IServiceBusClientFactory;
 import uk.gov.hmcts.reform.pbis.servicebus.MessageQueueProcessingTracker;
 import uk.gov.hmcts.reform.pbis.servicebus.MessageQueueProcessor;
+import uk.gov.hmcts.reform.pbis.servicebus.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.utils.SampleData;
 
 import java.util.List;

@@ -5,16 +5,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import uk.gov.hmcts.reform.pbis.model.EmailTemplateMapping;
-import uk.gov.hmcts.reform.pbis.model.EmailToSend;
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
+import uk.gov.hmcts.reform.pbis.config.EmailTemplateMapping;
+import uk.gov.hmcts.reform.pbis.notify.EmailToSend;
+import uk.gov.hmcts.reform.pbis.servicebus.PrivateBetaRegistration;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.FIRST_NAME;
-import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.LAST_NAME;
-import static uk.gov.hmcts.reform.pbis.model.TemplateFieldNames.WELCOME_LINK;
+import static uk.gov.hmcts.reform.pbis.notify.TemplateFieldNames.FIRST_NAME;
+import static uk.gov.hmcts.reform.pbis.notify.TemplateFieldNames.LAST_NAME;
+import static uk.gov.hmcts.reform.pbis.notify.TemplateFieldNames.WELCOME_LINK;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmailCreatorTest {

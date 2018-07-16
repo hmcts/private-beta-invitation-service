@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import uk.gov.hmcts.reform.pbis.Configuration;
 import uk.gov.hmcts.reform.pbis.categories.EndToEndTests;
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
+import uk.gov.hmcts.reform.pbis.servicebus.PrivateBetaRegistration;
 import uk.gov.hmcts.reform.pbis.utils.DeadLetterQueueHelper;
 import uk.gov.hmcts.reform.pbis.utils.NotificationHelper;
 import uk.gov.hmcts.reform.pbis.utils.ServiceBusFeeder;

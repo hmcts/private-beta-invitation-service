@@ -14,7 +14,6 @@ import uk.gov.hmcts.reform.pbis.EmailSendingException;
 import uk.gov.hmcts.reform.pbis.EmailService;
 import uk.gov.hmcts.reform.pbis.MessageProcessingResult;
 import uk.gov.hmcts.reform.pbis.MessageProcessingResultType;
-import uk.gov.hmcts.reform.pbis.model.PrivateBetaRegistration;
 
 import java.util.List;
 import java.util.Map;
