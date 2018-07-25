@@ -90,13 +90,9 @@ pmd {
 
 def versions = [
   springBoot: '1.5.14.RELEASE',
-  logging: '2.0.2',
+  logging: '2.2.1',
   hystrix: '1.4.5.RELEASE'
 ]
-
-configurations {
-  runtime.exclude group: 'com.microsoft.azure', module: 'applicationinsights-agent'
-}
 
 dependencies {
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: versions.springBoot
