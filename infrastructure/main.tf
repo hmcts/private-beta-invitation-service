@@ -11,6 +11,7 @@ locals {
   preview_vault_rg       = "${var.raw_product}-aat"
   default_vault_rg       = "${var.raw_product}-${var.env}"
   vault_rg               = "${(var.env == "preview" || var.env == "spreview") ? local.preview_vault_rg : local.default_vault_rg}"
+  sku_size = "${var.env == "prod" || var.env == "sprod" || var.env == "aat" ? "I2" : "I1"}"
 }
 
 # Make sure the resource group exists
@@ -56,6 +57,9 @@ module "service" {
   subscription  = "${var.subscription}"
   resource_group_name = "${azurerm_resource_group.rg.name}"
   common_tags         = "${var.common_tags}"
+  asp_name      = "${var.product}-${var.component}-${var.env}"
+  asp_rg        = "${var.product}-${var.component}-${var.env}"
+  instance_size = "${local.sku_size}"
 
   app_settings = {
     SERVICE_BUS_POLLING_DELAY_MS = "${var.service_bus_polling_delay_ms}"
