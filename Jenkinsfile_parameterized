@@ -1,0 +1,34 @@
+#!groovy
+
+@Library("Infrastructure") _
+
+List<LinkedHashMap<String, Object>> secrets = [
+  secret('servicebus-conn-string', 'TEST_SERVICE_BUS_CONNECTION_STRING'),
+  secret('test-service-notify-api-key', 'TEST_NOTIFY_API_KEY'),
+]
+
+static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
+  [ $class: 'AzureKeyVaultSecret',
+    secretType: 'Secret',
+    name: secretName,
+    version: '',
+    envVariable: envVar
+  ]
+}
+
+properties([
+  parameters([
+    string(name: 'PRODUCT_NAME', defaultValue: 'pbi', description: ''),
+    string(name: 'APP', defaultValue: 'service', description: ''),
+    string(name: 'TYPE', defaultValue: 'java', description: ''),
+    string(name: 'ENVIRONMENT', defaultValue: 'sandbox', description: 'Environment where code should be build and deployed'),
+    choice(name: 'SUBSCRIPTION', choices: 'sandbox', description: 'Azure subscriptions available to build in')
+  ]),
+  [$class: 'GithubProjectProperty', projectUrlStr: 'github.com/hmcts/private-beta-invitation-service'],
+  pipelineTriggers([[$class: 'GitHubPushTrigger']])
+])
+
+withParameterizedPipeline(params.TYPE, params.PRODUCT_NAME, params.APP, params.ENVIRONMENT, params.SUBSCRIPTION) {
+  enableSlackNotifications('#rpe-build-notices')
+  loadVaultSecrets(secrets)
+}
