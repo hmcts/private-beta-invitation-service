@@ -19,6 +19,18 @@
   -->
 
   <suppress>
+     <notes><![CDATA[ old version pulled by checkstyle, bouncycastle and appinsights.]]></notes>
+     <gav regex="true">^com\.google\.guava:guava:.*$</gav>
+     <cve>CVE-2018-10237</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[ pulled by latest hystrix ]]></notes>
+    <gav regex="true">^org\.bouncycastle:bcprov-jdk15on:.*$</gav>
+    <cpe>cpe:/a:bouncycastle:legion-of-the-bouncy-castle-java-crytography-api</cpe>
+  </suppress>
+
+  <suppress>
     <notes><![CDATA[
      Does not apply, only used for communication with the service bus.
     ]]></notes>
