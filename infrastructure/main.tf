@@ -12,12 +12,21 @@ locals {
   default_vault_rg       = "${var.raw_product}-${var.env}"
   vault_rg               = "${(var.env == "preview" || var.env == "spreview") ? local.preview_vault_rg : local.default_vault_rg}"
   sku_size = "${var.env == "prod" || var.env == "sprod" || var.env == "aat" ? "I2" : "I1"}"
+
+  tags = "${merge(
+    var.common_tags,
+    map(
+      "Team Contact", var.team_contact
+    )
+  )}"
 }
 
 # Make sure the resource group exists
 resource "azurerm_resource_group" "rg" {
   name     = "${var.product}-${var.component}-${var.env}"
   location = "${var.location}"
+
+  tags = "${local.tags}"
 }
 
 resource "azurerm_resource_group" "vault_rg" {
