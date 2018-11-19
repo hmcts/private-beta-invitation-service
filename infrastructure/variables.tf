@@ -45,6 +45,6 @@ variable "common_tags" {
 }
 
 variable "team_contact" {
-  default     = "#platform-engineering"
+  default     = "#rpe"
   description = "Slack channel team can be reached on for support"
 }
