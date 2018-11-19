@@ -43,3 +43,8 @@ variable "subscription" {}
 variable "common_tags" {
   type = "map"
 }
+
+variable "team_contact" {
+  default     = "#platform-engineering"
+  description = "Slack channel team can be reached on for support"
+}
