@@ -34,53 +34,50 @@ tasks.withType(Checkstyle).each { checkstyleTask ->
 sourceSets {
   functionalTest {
     java {
-      compileClasspath += main.output
-      runtimeClasspath += main.output
+      compileClasspath += main.output + test.output
+      runtimeClasspath += main.output + test.output
       srcDir file('src/functionalTest/java')
     }
     resources.srcDir file('src/functionalTest/resources')
   }
-
-  integrationTest {
-    java {
-      compileClasspath += main.output
-      runtimeClasspath += main.output
-      srcDir file('src/integrationTest/java')
-    }
-    resources.srcDir file('src/integrationTest/resources')
-  }
-
-  smokeTest {
-    java {
-      compileClasspath += main.output
-      runtimeClasspath += main.output
-      srcDir file('src/smokeTest/java')
-    }
-    resources.srcDir file('src/smokeTest/resources')
-  }
-}
-
-task functional(type: Test, description: 'Runs the functional tests.', group: 'Verification') {
-  testClassesDirs = sourceSets.functionalTest.output.classesDirs
-  classpath = sourceSets.functionalTest.runtimeClasspath
-
-  environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
-}
-
-task integration(type: Test, description: 'Runs the integration tests.', group: 'Verification') {
-  testClassesDirs = sourceSets.integrationTest.output.classesDirs
-  classpath = sourceSets.integrationTest.runtimeClasspath
-
-  environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
 }
 
 task smoke(type: Test) {
-  description = "Runs Smoke Tests"
-  testClassesDirs = sourceSets.smokeTest.output.classesDirs
-  classpath = sourceSets.smokeTest.runtimeClasspath
+  description = "Runs smoke tests"
+  testClassesDirs = sourceSets.functionalTest.output.classesDirs
+  setClasspath sourceSets.functionalTest.runtimeClasspath
+
+  useJUnit {
+    includeCategories 'uk.gov.hmcts.reform.pbis.categories.SmokeTests'
+  }
 
   environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
 }
+
+task functional(type: Test , group: 'Verification') {
+  description = "Runs functional tests"
+  testClassesDirs = sourceSets.functionalTest.output.classesDirs
+  setClasspath sourceSets.functionalTest.runtimeClasspath
+
+  useJUnit {
+    includeCategories 'uk.gov.hmcts.reform.pbis.categories.FunctionalTests'
+  }
+
+  environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
+}
+
+task integration(type: Test , group: 'Verification') {
+  description = "Runs integration tests"
+  testClassesDirs = sourceSets.functionalTest.output.classesDirs
+  setClasspath sourceSets.functionalTest.runtimeClasspath
+
+  useJUnit {
+    includeCategories 'uk.gov.hmcts.reform.pbis.categories.IntegrationTests'
+  }
+
+  environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
+}
+
 
 jacocoTestReport {
   executionData(test, integration)
@@ -92,6 +89,7 @@ jacocoTestReport {
 }
 
 project.tasks['sonarqube'].dependsOn test, integration
+project.tasks['check'].dependsOn integration
 
 sonarqube {
   properties {
@@ -166,22 +164,12 @@ dependencies {
 
   compile group: 'com.microsoft.azure', name: 'azure-servicebus', version: '1.2.6'
 
-  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: versions.junit
-  testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: versions.junit
-  testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: versions.junit
-
   testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springBoot
   testCompile group: 'org.assertj', name: 'assertj-core', version: '3.9.0'
   testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.7.3'
   testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.7.3'
 
-  integrationTestCompile sourceSets.main.runtimeClasspath
-  integrationTestCompile sourceSets.test.runtimeClasspath
-
   functionalTestCompile sourceSets.main.runtimeClasspath
-
-  smokeTestCompile sourceSets.main.runtimeClasspath
-
   functionalTestCompile(
     'org.springframework.boot:spring-boot-starter-test',
     'org.assertj:assertj-core:3.9.0',
@@ -193,14 +181,12 @@ dependencies {
 
 test {
   environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
-  useJUnitPlatform()
-  failFast = true
 }
 
 mainClassName = 'uk.gov.hmcts.reform.pbis.Application'
 
 bootJar {
-  archiveName 'private-beta-invitation-service.jar'
+  archiveName 'private-beta-invitation-service-all.jar'
 
   manifest {
     attributes('Implementation-Version': project.version.toString())
