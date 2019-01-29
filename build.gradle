@@ -95,11 +95,10 @@ project.tasks['sonarqube'].dependsOn test, integration
 
 sonarqube {
   properties {
-    property "sonar.projectName", "Reform :: spring-boot-template"
-    property "sonar.projectKey", "uk.gov.hmcts.reform:spring-boot-template"
+    property "sonar.projectName", "Reform :: Private Beta Invitation Service"
+    property "sonar.projectKey", "uk.gov.hmcts.reform:private-beta-invitation-service"
     property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/test.exec"
     property "sonar.jacoco.itReportPath", "${project.buildDir}/jacoco/integration.exec"
-
   }
 }
 
