@@ -54,7 +54,7 @@ task smoke(type: Test) {
   environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
 }
 
-task functional(type: Test , group: 'Verification') {
+task functional(type: Test) {
   description = "Runs functional tests"
   testClassesDirs = sourceSets.functionalTest.output.classesDirs
   setClasspath sourceSets.functionalTest.runtimeClasspath
@@ -66,7 +66,7 @@ task functional(type: Test , group: 'Verification') {
   environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
 }
 
-task integration(type: Test , group: 'Verification') {
+task integration(type: Test) {
   description = "Runs integration tests"
   testClassesDirs = sourceSets.functionalTest.output.classesDirs
   setClasspath sourceSets.functionalTest.runtimeClasspath
@@ -77,7 +77,6 @@ task integration(type: Test , group: 'Verification') {
 
   environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
 }
-
 
 jacocoTestReport {
   executionData(test, integration)
