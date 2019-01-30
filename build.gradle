@@ -79,7 +79,9 @@ task integration(type: Test) {
 }
 
 jacocoTestReport {
-  executionData(test, integration)
+// seems the integration tests are not run at the moment??  
+//  executionData(test, integration)
+  executionData(test)
   reports {
     xml.enabled = true
     csv.enabled = false
