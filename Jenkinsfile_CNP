@@ -22,8 +22,4 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 
 withPipeline(type, product, app) {
   loadVaultSecrets(secrets)
-  before('buildinfra:aat') {
-    currentBuild.description = "Success, No deployment!"
-    return
-  }
 }
