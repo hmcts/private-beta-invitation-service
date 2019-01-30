@@ -73,7 +73,7 @@ public class MessageQueueProcessorTest {
         // make the mock validator use a real validator for validating (can't spy - final class)
         given(validator.validate(any())).willAnswer(invocation -> {
             PrivateBetaRegistration registration =
-                invocation.getArgumentAt(0, PrivateBetaRegistration.class);
+                invocation.getArgument(0);
 
             return Validation
                 .buildDefaultValidatorFactory()

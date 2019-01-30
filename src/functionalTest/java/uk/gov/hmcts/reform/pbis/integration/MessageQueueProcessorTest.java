@@ -328,8 +328,8 @@ public class MessageQueueProcessorTest extends AbstractServiceBusTest {
         doAnswer(invocation -> receiveMessage()).when(clientSpy).receiveMessage();
 
         doAnswer(invocation -> {
-            String messageId = invocation.getArgumentAt(0, String.class);
-            UUID lockToken = invocation.getArgumentAt(1, UUID.class);
+            String messageId = invocation.getArgument(0);
+            UUID lockToken = invocation.getArgument(1);
             serviceBusClient.completeMessage(messageId, lockToken);
             messagesToComplete.remove(messageId);
             return null;
