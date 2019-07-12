@@ -16,7 +16,7 @@ version = '0.0.1'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-checkstyle.toolVersion = '8.8'
+checkstyle.toolVersion = '8.18'
 checkstyle.configFile = new File(rootDir, "checkstyle.xml")
 
 // make build fail on Checkstyle issues (https://github.com/gradle/gradle/issues/881)
@@ -188,13 +188,13 @@ dependencies {
   compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: versions.hystrix
   compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix-dashboard', version: versions.hystrix
 
-  compile group: 'com.microsoft.azure', name: 'azure-servicebus', version: '1.2.6'
+  compile group: 'com.microsoft.azure', name: 'azure-servicebus', version: '1.2.15'
 
   testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: versions.springBoot) {
     exclude group: 'com.vaadin.external.google', module: "android-json"
   }
 
-  testCompile group: 'org.assertj', name: 'assertj-core', version: '3.9.0'
+  testCompile group: 'org.assertj', name: 'assertj-core', version: '3.12.2'
   testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: versions.powermock
   testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: versions.powermock
 
