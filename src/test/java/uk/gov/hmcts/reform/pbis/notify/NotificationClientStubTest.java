@@ -58,9 +58,39 @@ public class NotificationClientStubTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
+    public void getReceivedTextMessages_should_throw_UnsupportedOperationException() throws Exception {
+        notificationClientStub.getReceivedTextMessages("");
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void sendSms_senderId_should_throw_UnsupportedOperationException() throws Exception {
+        notificationClientStub.sendSms(null, null, null, null, null);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
     public void generateTemplatePreview_should_throw_UnsupportedOperationException()
         throws Exception {
 
         notificationClientStub.generateTemplatePreview("", EMPTY_MAP);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void sendPrecompiledLetter_with_postage_should_throw_UnsupportedOperationException() {
+        notificationClientStub.sendPrecompiledLetter(null, null, null);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void sendPrecompiledLetter_should_throw_UnsupportedOperationException() {
+        notificationClientStub.sendPrecompiledLetter(null, null);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void sendPrecompiledLetterWithInputStream_should_throw_UnsupportedOperationException() {
+        notificationClientStub.sendPrecompiledLetterWithInputStream(null, null);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void sendPrecompiledLetterWithInputStream_with_postage_should_throw_UnsupportedOperationException() {
+        notificationClientStub.sendPrecompiledLetterWithInputStream(null, null, null);
     }
 }
