@@ -1,13 +1,10 @@
 package uk.gov.hmcts.reform.pbis.notify;
 
-import java.io.File;
-import java.io.InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.gov.service.notify.LetterResponse;
 import uk.gov.service.notify.Notification;
 import uk.gov.service.notify.NotificationClientApi;
-import uk.gov.service.notify.NotificationClientException;
 import uk.gov.service.notify.NotificationList;
 import uk.gov.service.notify.ReceivedTextMessageList;
 import uk.gov.service.notify.SendEmailResponse;
@@ -17,6 +14,8 @@ import uk.gov.service.notify.Template;
 import uk.gov.service.notify.TemplateList;
 import uk.gov.service.notify.TemplatePreview;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Map;
 
 public class NotificationClientStub implements NotificationClientApi {
@@ -27,7 +26,9 @@ public class NotificationClientStub implements NotificationClientApi {
         "Notification client stub doesn't support this method";
 
     @Override
-    public SendEmailResponse sendEmail(String templateId, String emailAddress, Map<String, ?> personalisation, String reference) {
+    public SendEmailResponse sendEmail(
+        String templateId, String emailAddress, Map<String, ?> personalisation, String reference
+    ) {
         logger.info(
             String.format(
                 "Sending email to %s. Template ID: %s, reference: %s",
