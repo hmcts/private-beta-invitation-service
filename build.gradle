@@ -17,7 +17,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 checkstyle {
-  toolVersion = '8.21'
+  toolVersion = '8.24'
   configFile = new File(rootDir, "checkstyle.xml")
   maxWarnings = 0
 }
@@ -70,7 +70,7 @@ task integration(type: Test) {
 }
 
 jacocoTestReport {
-// seems the integration tests are not run at the moment??  
+// seems the integration tests are not run at the moment??
 //  executionData(test, integration)
   executionData(test)
   reports {
@@ -143,7 +143,7 @@ def versions = [
 ]
 
 configurations.all {
-  resolutionStrategy {  
+  resolutionStrategy {
     eachDependency { DependencyResolveDetails details ->
       if (details.requested.group in ['com.fasterxml.jackson.core', 'com.fasterxml.jackson.module', 'com.fasterxml.jackson.datatype']) {
         details.useVersion '2.9.9'
