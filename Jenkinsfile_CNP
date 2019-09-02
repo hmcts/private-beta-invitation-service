@@ -6,17 +6,20 @@ def type = "java"
 def product = "pbi"
 def app = "service"
 
-List<LinkedHashMap<String, Object>> secrets = [
-  secret('servicebus-conn-string', 'TEST_SERVICE_BUS_CONNECTION_STRING'),
-  secret('test-service-notify-api-key', 'TEST_NOTIFY_API_KEY'),
+def secrets = [
+  'pbi-${env}':
+    [
+      secret('servicebus-conn-string', 'TEST_SERVICE_BUS_CONNECTION_STRING'),
+      secret('test-service-notify-api-key', 'TEST_NOTIFY_API_KEY'),
+    ]
 ]
 
 static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
-  [ $class: 'AzureKeyVaultSecret',
-    secretType: 'Secret',
-    name: secretName,
-    version: '',
-    envVariable: envVar
+  [$class     : 'AzureKeyVaultSecret',
+   secretType : 'Secret',
+   name       : secretName,
+   version    : '',
+   envVariable: envVar
   ]
 }
 
