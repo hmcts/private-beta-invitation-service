@@ -69,4 +69,13 @@
     <cve>CVE-2018-1260</cve>
   </suppress>
 
+  <suppress>
+    <notes><![CDATA[
+   relates to form based authentication, not relevant to us, fix will be picked up in next spring boot update
+   ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed.*$</packageUrl>
+    <cve>CVE-2019-17563</cve>
+    <cve>CVE-2019-12418</cve>
+  </suppress>
+
 </suppressions>
