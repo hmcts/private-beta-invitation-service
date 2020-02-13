@@ -1,9 +1,12 @@
-FROM openjdk:8-jre
+ARG APP_INSIGHTS_AGENT_VERSION=2.5.1
+FROM hmctspublic.azurecr.io/base/java:openjdk-8-distroless-1.4
 
-COPY build/install/private-beta-invitation-service /opt/app/
+# Mandatory!
+ENV APP private-beta-invitation-service-all.jar
 
-WORKDIR /opt/app
+COPY build/libs/$APP /opt/app/
+COPY lib/applicationinsights-agent-2.5.1.jar lib/AI-Agent.xml /opt/app/
 
-HEALTHCHECK --interval=10s --timeout=10s --retries=10 CMD http_proxy="" curl --silent --fail http://localhost:4700/health
+EXPOSE 4700
 
-ENTRYPOINT ["/opt/app/bin/private-beta-invitation-service"]
+CMD ["private-beta-invitation-service-all.jar"]
