@@ -1,8 +1,10 @@
-# Private Beta Invitation Service
+# Private Beta Invitation Service (unmaintained)
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7cf5461dde5149338d6029cabe2c6606)](https://www.codacy.com/app/HMCTS/private-beta-invitation-service)
 [![codecov](https://codecov.io/gh/hmcts/private-beta-invitation-service/branch/master/graph/badge.svg)](https://codecov.io/gh/hmcts/private-beta-invitation-service)
 [![Build Status](https://travis-ci.org/hmcts/private-beta-invitation-service.svg?branch=master)](https://travis-ci.org/hmcts/private-beta-invitation-service)
+
+This service is not available for use in any environment and the codebase is no longer maintained.
 
 This project is a service that sends private beta welcome emails to citizens. It constantly checks if there is
 a new person that has agreed to join private beta and if there is one,
